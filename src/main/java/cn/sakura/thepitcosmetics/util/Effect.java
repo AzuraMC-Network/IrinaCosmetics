@@ -1,13 +1,58 @@
 package cn.sakura.thepitcosmetics.util;
 
-import lombok.Data;
+import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class Effect {
+    private final static Map<UUID, Effect> users = new HashMap<>();
 
-    private org.bukkit.Effect effect;
+    @Getter
+    private UUID uuid;
+    @Getter
+    private AbstractEffect shootEffect;
+    @Getter
+    private AbstractEffect deathEffect;
+    @Getter
+    private AbstractEffect killEffect;
 
-    public Effect(org.bukkit.Effect effect) {
-        this.effect = effect;
+    public Effect(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public static Effect getUser(UUID uuid) {
+        return users.computeIfAbsent(uuid, Effect::new);
+    }
+
+    public void setKillEffect(String effectIternalName) {
+        this.killEffect = getEffect(effectIternalName);
+    }
+    public void setShootEffect(String effectIternalName) {
+        this.shootEffect = getEffect(effectIternalName);
+    }
+    public void setDeathEffect(String effectIternalName) {
+        this.deathEffect = getEffect(effectIternalName);
+    }
+
+    public AbstractEffect getEffect(String effect) {
+        if (!new EffectManager().getEffectMap().isEmpty()) return new EffectManager().getEffectMap().get(effect);
+        return null;
+    }
+
+    public void resetShootEffect() {
+        this.shootEffect = null;
+    }
+
+    public void resetDeathEffect() {
+        this.deathEffect = null;
+    }
+
+    public void resetKillEffect() {
+        this.killEffect = null;
     }
 }
