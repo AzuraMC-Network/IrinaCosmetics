@@ -1,5 +1,6 @@
 package cn.sakura.thepitcosmetics.cosmetics;
 
+import cn.sakura.thepitcosmetics.util.CC;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
@@ -14,7 +15,7 @@ public class EffectManager {
     private final HashMap<String, AbstractEffect> effectMap = new HashMap<>();
 
     public void init(Collection<Class<? extends AbstractEffect>> classes) {
-        Bukkit.getLogger().info("§8[§fGAME§bBYTE §aThePitAddon§8] §e正在加载附魔...");
+        Bukkit.getLogger().info(CC.translate("&8[&3Miral&bElioraen&8] &e正在加载特效"));
 
         for (Class<? extends AbstractEffect> aClass : classes) {
             if (AbstractEffect.class.isAssignableFrom(aClass)) {
@@ -25,11 +26,12 @@ public class EffectManager {
 
                 } catch (Exception var5) {
                     var5.printStackTrace();
-                    Bukkit.getLogger().warning(var5 + "§8[§fGAME§bBYTE §aThePitAddon§8] §c出现异常,错误已抛出");
+                    Bukkit.getLogger().warning(var5 + CC.translate("&8[&3Miral&bElioraen&8] &a出现错误"));
                 }
             }
         }
 
-        Bukkit.getLogger().info( "§8[§fGAME§bBYTE §aThePitAddon§8] §a成功加载附魔" + this.effects.size() + "个!");
+        Bukkit.getLogger().info( CC.translate("&8[&3Miral&bElioraen&8] &a已加载 &e" + this.effects.size() + " &a个特效!"));
+
     }
 }

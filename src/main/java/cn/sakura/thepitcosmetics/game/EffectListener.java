@@ -1,5 +1,6 @@
 package cn.sakura.thepitcosmetics.game;
 
+import cn.sakura.thepitcosmetics.util.CC;
 import cn.sakura.thepitcosmetics.util.Effect;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -14,9 +15,12 @@ public class EffectListener implements Listener {
         if (e.getEntity() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getEntity();
             Player shooter = (Player) arrow.getShooter();
-
+            shooter.sendMessage(CC.translate("SHOOT EVENT"));
             Effect user = Effect.getUser(shooter.getUniqueId());
-            if (user != null && user.getShootEffect() != null) user.getShootEffect().handleShoot(shooter, arrow);
+            if (user != null && user.getShootEffect() != null) {
+                shooter.sendMessage(CC.translate("SHOOT EFFECT"));
+                user.getShootEffect().handleShoot(shooter, arrow);
+            }
         }
     }
 

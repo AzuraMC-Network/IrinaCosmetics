@@ -1,9 +1,10 @@
 package cn.sakura.thepitcosmetics;
 
-import cn.charlotte.pit.enchantment.AbstractEnchantment;
+import cn.charlotte.pit.util.command.CommandHandler;
 import cn.charlotte.pit.util.command.util.ClassUtil;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
 import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
+import cn.sakura.thepitcosmetics.game.EffectListener;
 import cn.sakura.thepitcosmetics.util.CC;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -19,17 +20,18 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        loadEnchantmentManager();
-        Bukkit.getConsoleSender().sendMessage(CC.translate("&bPlugin Enabled"));
-        Bukkit.getPluginManager().registerEvents(this, this);
+        loadEffectManager();
+        loadCommands();
+        Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &bPlugin Enabled"));
+        Bukkit.getPluginManager().registerEvents(new EffectListener(), this);
     }
 
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage(CC.translate("&bPlugin Disabled"));
+        Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &cPlugin Disabled"));
     }
 
-    private void loadEnchantmentManager() {
+    private void loadEffectManager() {
         EffectManager effectManager = new EffectManager();
 
         Collection<Class<?>> classes = ClassUtil.getClassesInPackage(this, "cn.sakura.thepitcosmetics.cosmetics.impl");
@@ -46,5 +48,9 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
         } else {
             Bukkit.getConsoleSender().sendMessage("§8[§fGAME§bBYTE §aThePitAddon§8] §c未成功加载任何附魔");
         }
+    }
+
+    private void loadCommands() {
+        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.thepitcosmetics.command");
     }
 }

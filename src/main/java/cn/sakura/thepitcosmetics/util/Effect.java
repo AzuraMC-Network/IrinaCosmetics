@@ -40,8 +40,7 @@ public class Effect {
     }
 
     public AbstractEffect getEffect(String effect) {
-        if (!new EffectManager().getEffectMap().isEmpty()) return new EffectManager().getEffectMap().get(effect);
-        return null;
+        return new EffectManager().getEffectMap().get(effect);
     }
 
     public void resetShootEffect() {
