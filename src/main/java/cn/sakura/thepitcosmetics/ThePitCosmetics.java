@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         loadEffectManager();
         loadCommands();
         Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &bPlugin Enabled"));
@@ -32,23 +34,31 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
     }
 
     private void loadEffectManager() {
-        EffectManager effectManager = new EffectManager();
+        EffectManager effectManager = EffectManager.getInstance();
 
-        Collection<Class<?>> classes = ClassUtil.getClassesInPackage(this, "cn.sakura.thepitcosmetics.cosmetics.impl");
+        Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &f正在扫描特效类..."));
 
-        Collection<Class<? extends AbstractEffect>> filteredClasses = classes.stream()
-                .filter(AbstractEffect.class::isAssignableFrom)
-                .map(clazz -> (Class<? extends AbstractEffect>) clazz)
-                .collect(Collectors.toList());
+        try {
+            // 扫描指定包中的所有类
+            Collection<Class<?>> classes = ClassUtil.getClassesInPackage(this, "cn.sakura.thepitcosmetics.cosmetics.impl");
 
-        effectManager.init(filteredClasses);
+            // 过滤出继承 AbstractEffect 的类
+            Collection<Class<? extends AbstractEffect>> filteredClasses = classes.stream()
+                    .filter(AbstractEffect.class::isAssignableFrom)
+                    .filter(clazz -> !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) // 忽略抽象类和接口
+                    .map(clazz -> (Class<? extends AbstractEffect>) clazz)
+                    .collect(Collectors.toList());
 
-        if (!effectManager.getEffects().isEmpty()) {
-            Bukkit.getConsoleSender().sendMessage("§8[§fGAME§bBYTE §aThePitAddon§8] §a附魔成功加载");
-        } else {
-            Bukkit.getConsoleSender().sendMessage("§8[§fGAME§bBYTE §aThePitAddon§8] §c未成功加载任何附魔");
+            // 初始化特效管理器
+            effectManager.init(filteredClasses);
+
+        } catch (Exception e) {
+            // 捕获加载过程中可能的异常
+            Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &c加载时发生错误!"));
+            e.printStackTrace();
         }
     }
+
 
     private void loadCommands() {
         CommandHandler.loadCommandsFromPackage(this, "cn.sakura.thepitcosmetics.command");

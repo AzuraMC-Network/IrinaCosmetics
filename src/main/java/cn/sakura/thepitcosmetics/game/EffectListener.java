@@ -1,7 +1,7 @@
 package cn.sakura.thepitcosmetics.game;
 
-import cn.sakura.thepitcosmetics.util.CC;
-import cn.sakura.thepitcosmetics.util.Effect;
+import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,14 +12,14 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 public class EffectListener implements Listener {
     @EventHandler
     public void onShoot(ProjectileLaunchEvent e) {
-        if (e.getEntity() instanceof Arrow) {
-            Arrow arrow = (Arrow) e.getEntity();
-            Player shooter = (Player) arrow.getShooter();
-            shooter.sendMessage(CC.translate("SHOOT EVENT"));
-            Effect user = Effect.getUser(shooter.getUniqueId());
-            if (user != null && user.getShootEffect() != null) {
-                shooter.sendMessage(CC.translate("SHOOT EFFECT"));
-                user.getShootEffect().handleShoot(shooter, arrow);
+        if (!(e.getEntity().getShooter() instanceof Player)) return;
+
+        Player player = (Player) e.getEntity().getShooter();
+        AbstractEffect effect = EffectManager.getInstance().getPlayerShootEffect(player);
+
+        if (effect != null) {
+            if (e.getEntity() instanceof Arrow) {
+                effect.handleShoot(player, (Arrow) e.getEntity());
             }
         }
     }
@@ -29,15 +29,20 @@ public class EffectListener implements Listener {
         Player target = e.getEntity();
         Player killer = e.getEntity().getKiller();
 
-        Effect user = Effect.getUser(killer.getUniqueId());
-        if (user != null && user.getKillEffect() != null) user.getKillEffect().handleKill(target);
+        AbstractEffect effect = EffectManager.getInstance().getPlayerKillEffect(killer);
+
+        if (effect != null) {
+            effect.handleKill(target);
+        }
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player myself = e.getEntity();
 
-        Effect user = Effect.getUser(myself.getUniqueId());
-        if (user != null && user.getDeathEffect() != null) user.getDeathEffect().handleDeath(myself);
+        AbstractEffect effect = EffectManager.getInstance().getPlayerDeathEffect(myself);
+        if (effect != null) {
+            effect.handleDeath(myself);
+        }
     }
 }
