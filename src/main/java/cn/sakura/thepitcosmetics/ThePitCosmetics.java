@@ -5,6 +5,7 @@ import cn.charlotte.pit.util.command.util.ClassUtil;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
 import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
 import cn.sakura.thepitcosmetics.game.EffectListener;
+import cn.sakura.thepitcosmetics.menu.player.EffectTypeSelect;
 import cn.sakura.thepitcosmetics.util.CC;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
         loadCommands();
         Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &bPlugin Enabled"));
         Bukkit.getPluginManager().registerEvents(new EffectListener(), this);
+        getServer().getPluginManager().registerEvents(new EffectTypeSelect(), this);
     }
 
     @Override
@@ -58,7 +60,6 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
     }
-
 
     private void loadCommands() {
         CommandHandler.loadCommandsFromPackage(this, "cn.sakura.thepitcosmetics.command");

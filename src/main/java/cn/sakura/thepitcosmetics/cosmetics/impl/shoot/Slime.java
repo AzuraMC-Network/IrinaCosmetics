@@ -1,38 +1,46 @@
 package cn.sakura.thepitcosmetics.cosmetics.impl.shoot;
 
+import cn.charlotte.pit.util.chat.CC;
+import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.thepitcosmetics.ThePitCosmetics;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
 import org.bukkit.Effect;
-import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestIShootEffect2 extends AbstractEffect {
-
+public class Slime extends AbstractEffect {
     @Override
     public String getDisplayName() {
-        return "TestEffect";
+        return "史莱姆";
     }
 
     @Override
     public String getEffectInternalName() {
-        return "testShootEffect2";
+        return "slime";
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return new ItemStack(Material.SLIME_BALL);
     }
 
     @Override
     public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add("这是一个测试特效");
-
-        return lore;
+        return CC.translate(List.of(
+                "&8弹射物轨迹",
+                "",
+                "&7选择 &f" + getDisplayName() + " &7作为你的弹射物轨迹"
+        ));
     }
 
     @Override
-    public void handleShoot(Player player, Arrow arrow) {
+    public void handleShoot(Player shooter, Arrow arrow) {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -41,18 +49,18 @@ public class TestIShootEffect2 extends AbstractEffect {
                     return;
                 }
 
-                Location arrowLoc2 = arrow.getLocation();
-
-                for (int i = 0; i < 2; i++) {
-                    arrow.getWorld().playEffect(arrowLoc2, Effect.LAVA_POP, 0);
-                }
+                arrow.getWorld().playEffect(arrow.getLocation(), Effect.SLIME, 0);
             }
         }.runTaskTimerAsynchronously(ThePitCosmetics.getInstance(), 0, 1);
     }
 
     @Override
-    public void handleDeath(Player player) {}
+    public void handleDeath(Player myself) {
+
+    }
 
     @Override
-    public void handleKill(Player player) {}
+    public void handleKill(Player target) {
+
+    }
 }
