@@ -1,6 +1,7 @@
 package cn.sakura.thepitcosmetics.cosmetics.impl.kill;
 
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.util.PlayerUtil;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 
@@ -39,6 +40,6 @@ public class TestKillEffect extends AbstractEffect {
 
     @Override
     public void handleKill(Player target) {
-
+        PlayerUtil.playThunderEffect(target.getLocation());
     }
 }

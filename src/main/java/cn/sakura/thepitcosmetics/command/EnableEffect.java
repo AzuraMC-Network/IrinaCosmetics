@@ -13,10 +13,16 @@ public class EnableEffect {
     )
     public void enableEffect(Player player, @Parameter(name = "BOOLEAN") String Boolean, @Parameter(name = "EffectInternalName") String EffectInternalName) {
         switch (Boolean) {
-            case "false":
-                EffectManager.getInstance().removePlayerEffect(player);
+            case "remove":
+                EffectManager.getInstance().removePlayerAllEffect(player);
                 break;
-            case "true":
+            case "kill":
+                EffectManager.getInstance().setPlayerKillEffect(player, EffectInternalName);
+                break;
+            case "death":
+                EffectManager.getInstance().setPlayerDeathEffect(player, EffectInternalName);
+                break;
+            case "shoot":
                 EffectManager.getInstance().setPlayerShootEffect(player, EffectInternalName);
                 break;
         }

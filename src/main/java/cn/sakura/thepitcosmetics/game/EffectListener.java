@@ -28,6 +28,7 @@ public class EffectListener implements Listener {
     public void onKill(PlayerDeathEvent e) {
         Player target = e.getEntity();
         Player killer = e.getEntity().getKiller();
+        if (killer == null) return;
 
         AbstractEffect effect = EffectManager.getInstance().getPlayerKillEffect(killer);
 

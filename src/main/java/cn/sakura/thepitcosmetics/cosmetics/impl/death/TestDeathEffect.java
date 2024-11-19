@@ -36,7 +36,7 @@ public class TestDeathEffect extends AbstractEffect {
 
     @Override
     public void handleDeath(Player myself) {
-        myself.playSound(myself.getLocation(), Sound.WOLF_DEATH, 5F, 5F);
+        myself.playSound(myself.getLocation(), Sound.WOLF_DEATH, 3F, 1F);
         CC.broadcast(myself.getDisplayName() + " 已经趋势了");
     }
 
