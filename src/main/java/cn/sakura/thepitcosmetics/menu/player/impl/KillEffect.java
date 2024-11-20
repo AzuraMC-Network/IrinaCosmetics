@@ -1,5 +1,6 @@
 package cn.sakura.thepitcosmetics.menu.player.impl;
 
+import cn.charlotte.pit.data.PlayerProfile;
 import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.charlotte.pit.util.item.ItemUtil;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
@@ -48,7 +49,12 @@ public class KillEffect extends AbstractMenu implements Listener {
             );
         }
 
+        PlayerProfile profile = PlayerProfile.getPlayerProfileByUuid(player.getUniqueId());
         for (int slots = 36; slots <= 44; slots++) {
+            if (slots == 40) {
+                addItemToInventory(40, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&3Miral&bElioraen"));
+                continue;
+            }
             addItemToInventory(slots, new ItemBuilder(blackGlassPane), "&r", List.of(""));
         }
     }

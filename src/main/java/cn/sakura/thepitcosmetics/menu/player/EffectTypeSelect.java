@@ -41,6 +41,9 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
 
         ItemStack whiteGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
         whiteGlassPane.setDurability((short)0);
+        ItemStack redGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
+        redGlassPane.setDurability((short)14);
+
         PlayerProfile profile = PlayerProfile.getPlayerProfileByUuid(player.getUniqueId());
 
         addItemToInventory(12, new ItemBuilder(Material.ARROW).shiny().internalName("Shoot"), "&f弹射物轨迹", List.of("", "&e点击选择你的弹射物轨迹"));
@@ -51,6 +54,7 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
         addItemToInventory(10, new ItemBuilder(whiteGlassPane), "&r", List.of(""));
         addItemToInventory(19, new ItemBuilder(whiteGlassPane), "&r", List.of(""));
 
+        addItemToInventory(18, new ItemBuilder(redGlassPane).internalName("Close"), "&c关闭", List.of(""));
         addItemToInventory(9, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&3Miral&bElioraen"));
     }
 
@@ -62,6 +66,8 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
         ItemStack clickedItem = e.getCurrentItem();
 
         if (clickedItem == null) return;
+
+        if (ItemUtil.getInternalName(clickedItem).equalsIgnoreCase("close")) player.closeInventory();
 
         AbstractMenu menu = effectMenus.get(ItemUtil.getInternalName(clickedItem).toLowerCase());
 

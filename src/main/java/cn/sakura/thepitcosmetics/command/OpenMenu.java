@@ -7,8 +7,7 @@ import org.bukkit.entity.Player;
 
 public class OpenMenu {
     @Command(
-            names = {"openeffectmenu"},
-            permissionNode = "pit.admin"
+            names = {"openeffectmenu"}
     )
     public void openEffectMenu(Player player) {
         AbstractMenu menu = new EffectTypeSelect();
