@@ -2,6 +2,7 @@ package cn.sakura.thepitcosmetics.cosmetics.impl.shoot;
 
 import cn.sakura.thepitcosmetics.ThePitCosmetics;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.cosmetics.EffectType;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -25,16 +26,13 @@ public class TestIShootEffect extends AbstractEffect {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return new ItemStack(Material.ARROW);
+    public EffectType getEffectType() {
+        return EffectType.SHOOT;
     }
 
     @Override
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add("这是一个测试特效");
-
-        return lore;
+    public ItemStack getIcon() {
+        return new ItemStack(Material.ARROW);
     }
 
     @Override

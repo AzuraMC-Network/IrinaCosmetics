@@ -8,7 +8,7 @@ import cn.sakura.thepitcosmetics.menu.PitMenu;
 import cn.sakura.thepitcosmetics.menu.player.impl.DeathEffect;
 import cn.sakura.thepitcosmetics.menu.player.impl.KillEffect;
 import cn.sakura.thepitcosmetics.menu.player.impl.ShootEffect;
-import cn.sakura.thepitcosmetics.util.CC;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

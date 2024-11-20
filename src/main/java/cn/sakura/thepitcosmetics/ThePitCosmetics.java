@@ -6,8 +6,12 @@ import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
 import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
 import cn.sakura.thepitcosmetics.game.EffectListener;
 import cn.sakura.thepitcosmetics.menu.player.EffectTypeSelect;
+import cn.sakura.thepitcosmetics.menu.player.impl.DeathEffect;
+import cn.sakura.thepitcosmetics.menu.player.impl.KillEffect;
+import cn.sakura.thepitcosmetics.menu.player.impl.ShootEffect;
 import cn.sakura.thepitcosmetics.util.CC;
 import lombok.Getter;
+import net.jitse.npclib.listeners.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,7 +31,10 @@ public final class ThePitCosmetics extends JavaPlugin implements Listener {
         loadCommands();
         Bukkit.getConsoleSender().sendMessage(CC.translate("&8[&3Miral&bElioraen&8] &bPlugin Enabled"));
         Bukkit.getPluginManager().registerEvents(new EffectListener(), this);
-        getServer().getPluginManager().registerEvents(new EffectTypeSelect(), this);
+        Bukkit.getPluginManager().registerEvents(new EffectTypeSelect(), this);
+        Bukkit.getPluginManager().registerEvents(new DeathEffect(), this);
+        Bukkit.getPluginManager().registerEvents(new KillEffect(), this);
+        Bukkit.getPluginManager().registerEvents(new ShootEffect(), this);
     }
 
     @Override

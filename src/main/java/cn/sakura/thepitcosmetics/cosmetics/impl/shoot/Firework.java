@@ -4,6 +4,7 @@ import cn.charlotte.pit.util.chat.CC;
 import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.thepitcosmetics.ThePitCosmetics;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.cosmetics.EffectType;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -26,17 +27,13 @@ public class Firework extends AbstractEffect {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return new ItemStack(Material.FIREWORK);
+    public EffectType getEffectType() {
+        return EffectType.SHOOT;
     }
 
     @Override
-    public List<String> getLore() {
-        return CC.translate(List.of(
-            "&8弹射物轨迹",
-            "",
-            "&7选择 &f" + getDisplayName() + " &7作为你的弹射物轨迹"
-        ));
+    public ItemStack getIcon() {
+        return new ItemStack(Material.FIREWORK);
     }
 
     @Override

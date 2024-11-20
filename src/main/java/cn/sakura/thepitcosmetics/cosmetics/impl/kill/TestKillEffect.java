@@ -2,6 +2,7 @@ package cn.sakura.thepitcosmetics.cosmetics.impl.kill;
 
 import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
+import cn.sakura.thepitcosmetics.cosmetics.EffectType;
 import cn.sakura.thepitcosmetics.util.PlayerUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -24,16 +25,13 @@ public class TestKillEffect extends AbstractEffect {
     }
 
     @Override
-    public ItemStack getIcon() {
-        return new ItemBuilder(Material.BOW).shiny().build();
+    public EffectType getEffectType() {
+        return EffectType.KILL;
     }
 
     @Override
-    public List<String> getLore() {
-        List<String> lore = new ArrayList<>();
-        lore.add("这是一个测试特效");
-
-        return lore;
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.BOW).shiny().build();
     }
 
     @Override
