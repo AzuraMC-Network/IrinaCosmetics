@@ -1,6 +1,5 @@
 package cn.sakura.thepitcosmetics.menu;
 
-import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.thepitcosmetics.util.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,8 +23,8 @@ public abstract class AbstractMenu {
 
     protected abstract void setupItems(Player player);
 
-    protected void addItemToInventory(int slot, ItemBuilder material, String displayName, List<String> lore) {
-        ItemStack item = new ItemStack(material.build());
+    protected void addItemToInventory(int slot, ItemStack material, String displayName, List<String> lore) {
+        ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {

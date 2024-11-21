@@ -5,6 +5,7 @@ import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.charlotte.pit.util.item.ItemUtil;
 import cn.sakura.thepitcosmetics.cosmetics.AbstractEffect;
 import cn.sakura.thepitcosmetics.cosmetics.EffectManager;
+import cn.sakura.thepitcosmetics.game.Register;
 import cn.sakura.thepitcosmetics.menu.AbstractMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,9 +14,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Register
 public class KillEffect extends AbstractMenu implements Listener {
     @Override
     public String getMenuName() {
@@ -31,12 +32,12 @@ public class KillEffect extends AbstractMenu implements Listener {
     protected void setupItems(Player player) {
         ItemStack blackGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
         blackGlassPane.setDurability((short) 15);
-        addItemToInventory(0, new ItemBuilder(Material.BARRIER).internalName("NullEffect"), "&a无", List.of("", "&7默认的特效"));
+        addItemToInventory(0, new ItemBuilder(Material.BARRIER).internalName("NullEffect").build(), "&a无", List.of("", "&7默认的特效"));
 
         for (int i = 1; i <= Math.min(EffectManager.KillEffects.size(), 35); i++) {
             AbstractEffect effect = EffectManager.KillEffects.get(i - 1);
 
-            addItemToInventory(i, new ItemBuilder(effect.getIcon()).internalName(effect.getEffectInternalName()), effect.getDisplayName(),
+            addItemToInventory(i, new ItemBuilder(effect.getIcon()).internalName(effect.getEffectInternalName()).build(), effect.getDisplayName(),
                     List.of(
                             "&8击杀特效",
                             "",
@@ -52,10 +53,10 @@ public class KillEffect extends AbstractMenu implements Listener {
         PlayerProfile profile = PlayerProfile.getPlayerProfileByUuid(player.getUniqueId());
         for (int slots = 36; slots <= 44; slots++) {
             if (slots == 40) {
-                addItemToInventory(40, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&3Miral&bElioraen"));
+                addItemToInventory(40, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&3Miral&bElioraen"));
                 continue;
             }
-            addItemToInventory(slots, new ItemBuilder(blackGlassPane), "&r", List.of(""));
+            addItemToInventory(slots, blackGlassPane, "&r", List.of(""));
         }
     }
 

@@ -77,9 +77,9 @@
     <dependency>
       <groupId>cn.charlotte</groupId>
       <artifactId>ThePitPremium</artifactId>
-      <version>3.23</version>
+      <version>3.3</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/lib/ThePitPremium-3.23.jar</systemPath>
+      <systemPath>${project.basedir}/lib/ThePitPremium-3.3.jar</systemPath>
     </dependency>
   </dependencies>
 </project>
