@@ -1,7 +1,6 @@
 package cn.sakura.irinacosmetics.menu.player.impl;
 
-import cn.charlotte.pit.util.item.ItemBuilder;
-import cn.charlotte.pit.util.item.ItemUtil;
+import cn.sakura.irinacosmetics.util.ItemUtil;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
 import cn.sakura.irinacosmetics.game.Register;
@@ -29,12 +28,12 @@ public class ShootEffect extends AbstractMenu implements Listener {
 
     @Override
     protected void setupItems(Player player) {
-        addItemToInventory(0, new ItemBuilder(Material.BARRIER).internalName("NullEffect").build(), "&a无", List.of("", "&7默认的特效"));
+        addItemToInventory(0, new ItemUtil(Material.BARRIER).setInternalName("NullEffect").build(), "&a无", List.of("", "&7默认的特效"));
 
         for (int i = 1; i <= Math.min(EffectManager.ShootEffects.size(), 35); i++) {
             AbstractEffect effect = EffectManager.ShootEffects.get(i - 1);
 
-            addItemToInventory(i, new ItemBuilder(effect.getIcon()).internalName(effect.getEffectInternalName()).build(), effect.getDisplayName(),
+            addItemToInventory(i, new ItemUtil(effect.getIcon()).setInternalName(effect.getEffectInternalName()).build(), "&r" + effect.getDisplayName(),
                     List.of(
                             "&8弹射物轨迹",
                             "",

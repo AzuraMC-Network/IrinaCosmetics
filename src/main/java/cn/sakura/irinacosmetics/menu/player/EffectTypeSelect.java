@@ -65,7 +65,7 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
         Player player = (Player) e.getWhoClicked();
         ItemStack clickedItem = e.getCurrentItem();
 
-        if (clickedItem == null) return;
+        if (clickedItem == null || ItemUtil.getInternalName(clickedItem) == null) return;
 
         AbstractMenu menu = effectMenus.get(ItemUtil.getInternalName(clickedItem).toLowerCase());
 

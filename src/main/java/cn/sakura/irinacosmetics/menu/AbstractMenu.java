@@ -83,14 +83,18 @@ public abstract class AbstractMenu implements Listener {
         ItemStack currentItem = event.getCurrentItem();
         Player player = (Player) event.getWhoClicked();
 
-        if (ItemUtil.getInternalName(currentItem).equalsIgnoreCase("close")) {
-            player.closeInventory();
-            return;
-        }
-        if (ItemUtil.getInternalName(currentItem).equalsIgnoreCase("back")) {
-            EffectTypeSelect effectTypeSelect = new EffectTypeSelect();
-            effectTypeSelect.open(player);
-            return;
+        if (ItemUtil.getInternalName(currentItem) == null) return;
+
+        switch (ItemUtil.getInternalName(currentItem).toLowerCase()) {
+            case "close":
+                player.closeInventory();
+                return;
+            case "back":
+                EffectTypeSelect effectTypeSelect = new EffectTypeSelect();
+                effectTypeSelect.open(player);
+                return;
+            default:
+                return;
         }
     }
 }

@@ -33,7 +33,7 @@ public class DeathEffect extends AbstractMenu implements Listener {
         for (int i = 1; i <= Math.min(EffectManager.DeathEffects.size(), 35); i++) {
             AbstractEffect effect = EffectManager.DeathEffects.get(i - 1);
 
-            addItemToInventory(i, new ItemUtil(effect.getIcon()).setInternalName(effect.getEffectInternalName()).build(), effect.getDisplayName(),
+            addItemToInventory(i, new ItemUtil(effect.getIcon()).setInternalName(effect.getEffectInternalName()).build(), "&r" + effect.getDisplayName(),
                     List.of(
                             "&8亡语",
                             "",

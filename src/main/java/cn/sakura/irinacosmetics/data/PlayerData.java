@@ -1,9 +1,11 @@
 package cn.sakura.irinacosmetics.data;
 
+import org.bukkit.entity.Player;
+
 import java.util.UUID;
 
 public class PlayerData {
-    public PlayerData() {}
+    public PlayerData(Player player) {}
 
     public void loadPlayerData(UUID playerUUID) {}
 

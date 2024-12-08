@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public final class IrinaCosmetics extends JavaPlugin implements Listener {
-    private static final Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
-    private static final Plugin thePitPremiumPlugin = Bukkit.getPluginManager().getPlugin("ThePitPremium");
     public XConomyAPI xConomyAPI;
     public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
@@ -32,46 +30,51 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         instance = this;
         plugin = this;
 
-        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a欢迎使用, 主人"));
-
         plugin.saveDefaultConfig();
 
-        if (BalanceType != null) {
-            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前经济方案: &f" + BalanceType.toUpperCase()));
-            switch (BalanceType.toLowerCase()) {
-                case "xconomy":
-                    if (xConomyPlugin != null) {
-                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aXConomy 已加载!"));
-                        xConomyAPI = new XConomyAPI();
-                    } else {
-                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cXConomy 未加载!"));
-                        Bukkit.getPluginManager().disablePlugin(this);
-                        return;
-                    }
-                    break;
-                case "thepitpremium":
-                    if (thePitPremiumPlugin != null) {
-                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aThePitPremium 已加载!"));
-                    } else {
-                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cThePitPremium 未加载!"));
-                        Bukkit.getPluginManager().disablePlugin(this);
-                        return;
-                    }
-                    break;
-                default:
-                    Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&f笨蛋主人, 你认真的吗? 你确定是这个未知方案吗?"));
-                    Bukkit.getPluginManager().disablePlugin(this);
-                    return;
-            }
-        } else {
-            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c笨蛋主人! 你忘了写 BalanceType 啦!"));
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
+            Plugin thePitPremiumPlugin = Bukkit.getPluginManager().getPlugin("ThePitPremium");
 
-        loadEffectManager();
-        loadCommands();
-        loadListener();
+            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a欢迎使用, 主人"));
+
+            if (BalanceType != null) {
+                Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前经济方案: &f" + BalanceType.toUpperCase()));
+                switch (BalanceType.toLowerCase()) {
+                    case "xconomy":
+                        if (xConomyPlugin != null) {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aXConomy 已加载!"));
+                            xConomyAPI = new XConomyAPI();
+                        } else {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cXConomy 未加载!"));
+                            Bukkit.getPluginManager().disablePlugin(this);
+                            return;
+                        }
+                        break;
+                    case "thepitpremium":
+                        if (thePitPremiumPlugin != null) {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aThePitPremium 已加载!"));
+                        } else {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cThePitPremium 未加载!"));
+                            Bukkit.getPluginManager().disablePlugin(this);
+                            return;
+                        }
+                        break;
+                    default:
+                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&f笨蛋主人, 你认真的吗? 你确定是这个未知方案吗?"));
+                        Bukkit.getPluginManager().disablePlugin(this);
+                        return;
+                }
+            } else {
+                Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c笨蛋主人! 你忘了写 BalanceType 啦!"));
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
+
+            loadEffectManager();
+            loadCommands();
+            loadListener();
+        }, 21L);
     }
 
     @Override
