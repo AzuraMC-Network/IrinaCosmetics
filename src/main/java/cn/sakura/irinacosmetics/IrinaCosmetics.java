@@ -2,7 +2,7 @@ package cn.sakura.irinacosmetics;
 
 import cn.charlotte.pit.data.PlayerProfile;
 import cn.charlotte.pit.util.command.CommandHandler;
-import cn.charlotte.pit.util.command.util.ClassUtil;
+import cn.sakura.irinacosmetics.util.ClassUtil;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
 import cn.sakura.irinacosmetics.game.Register;
@@ -15,48 +15,52 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class IrinaCosmetics extends JavaPlugin implements Listener {
-    private final File file = new File(getDataFolder(), "config.yml");
     private static final Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
+    private static final Plugin thePitPremiumPlugin = Bukkit.getPluginManager().getPlugin("ThePitPremium");
     private XConomyAPI xConomyAPI;
     private final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
     @Getter
     public static IrinaCosmetics instance;
+    public static Plugin plugin;
 
     @Override
     public void onEnable() {
         instance = this;
+        plugin = this;
+
         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a欢迎使用, 主人"));
-        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前方案: " + BalanceType.toUpperCase()));
 
-        saveDefaultConfig();
+        plugin.saveDefaultConfig();
 
-        if(!getDataFolder().exists()) getDataFolder().mkdir();
-
-        if(!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e){
-                e.printStackTrace();
+        if (BalanceType != null) {
+            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前方案: " + BalanceType.toUpperCase()));
+            switch (BalanceType.toLowerCase()) {
+                case "xconomy":
+                    if (xConomyPlugin != null) {
+                        xConomyAPI = new XConomyAPI();
+                    } else {
+                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cXConomy 未加载!"));
+                        Bukkit.getPluginManager().disablePlugin(this);
+                        return;
+                    }
+                case "thepitpremium":
+                    if (thePitPremiumPlugin == null) {
+                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cThePitPremium 未加载!"));
+                        Bukkit.getPluginManager().disablePlugin(this);
+                        return;
+                    }
             }
-        }
-
-        if (BalanceType != null && BalanceType.equalsIgnoreCase("xconomy")) {
-            if (xConomyPlugin != null) {
-                xConomyAPI = new XConomyAPI();
-            } else {
-                Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cXConomy 未加载!"));
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+        } else {
+            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c笨蛋主人! 你忘了写 BalanceType 啦!"));
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
         loadEffectManager();
