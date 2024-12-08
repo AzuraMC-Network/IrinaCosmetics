@@ -18,6 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import static cn.sakura.irinacosmetics.util.ItemUtil.createGlassPane;
+
 @Register
 public abstract class AbstractMenu implements Listener {
     protected DecimalFormat df = new DecimalFormat("###,###,###");
@@ -74,12 +76,6 @@ public abstract class AbstractMenu implements Listener {
                     break;
             }
         }
-    }
-
-    private ItemStack createGlassPane(short durability) {
-        ItemStack glassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        glassPane.setDurability(durability);
-        return glassPane;
     }
 
     @EventHandler

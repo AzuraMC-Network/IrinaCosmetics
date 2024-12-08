@@ -1,8 +1,7 @@
 package cn.sakura.irinacosmetics.menu.player;
 
-import cn.charlotte.pit.data.PlayerProfile;
-import cn.charlotte.pit.util.item.ItemBuilder;
-import cn.charlotte.pit.util.item.ItemUtil;
+import cn.sakura.irinacosmetics.data.BalanceManager;
+import cn.sakura.irinacosmetics.util.ItemUtil;
 import cn.sakura.irinacosmetics.game.Register;
 import cn.sakura.irinacosmetics.menu.AbstractMenu;
 import cn.sakura.irinacosmetics.menu.player.impl.DeathEffect;
@@ -18,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
+
+import static cn.sakura.irinacosmetics.util.ItemUtil.createGlassPane;
 
 @Register
 public class EffectTypeSelect extends AbstractMenu implements Listener {
@@ -39,23 +40,22 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
         effectMenus.put("kill", new KillEffect());
         effectMenus.put("death", new DeathEffect());
 
-        ItemStack whiteGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        whiteGlassPane.setDurability((short)0);
-        ItemStack redGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        redGlassPane.setDurability((short)14);
+        ItemStack whiteGlassPane = createGlassPane((short) 0);
+        ItemStack redGlassPane = createGlassPane((short) 14);
 
-        PlayerProfile profile = PlayerProfile.getPlayerProfileByUuid(player.getUniqueId());
+        int coin = BalanceManager.getBalance(player.getUniqueId());
 
-        addItemToInventory(12, new ItemBuilder(Material.ARROW).shiny().internalName("Shoot").build(), "&f弹射物轨迹", List.of("", "&e点击选择你的弹射物轨迹"));
-        addItemToInventory(14, new ItemBuilder(Material.IRON_SWORD).shiny().internalName("Kill").build(), "&f击杀效果", List.of("", "&e点击选择你的击杀效果"));
-        addItemToInventory(16, new ItemBuilder(Material.GHAST_TEAR).shiny().internalName("Death").build(), "&f亡语", List.of("", "&e点击选择你的亡语"));
+        addItemToInventory(12, new ItemUtil(Material.ARROW).shiny().setInternalName("Shoot").build(), "&f弹射物轨迹", List.of("", "&e点击选择你的弹射物轨迹"));
+        addItemToInventory(14, new ItemUtil(Material.IRON_SWORD).shiny().setInternalName("Kill").build(), "&f击杀效果", List.of("", "&e点击选择你的击杀效果"));
+        addItemToInventory(16, new ItemUtil(Material.GHAST_TEAR).shiny().setInternalName("Death").build(), "&f亡语", List.of("", "&e点击选择你的亡语"));
 
-        addItemToInventory(1, whiteGlassPane, "&r", List.of(""));
-        addItemToInventory(10, whiteGlassPane, "&r", List.of(""));
-        addItemToInventory(19, whiteGlassPane, "&r", List.of(""));
+        int[] whitePaneSlots = {1, 10, 19};
+        for (int slot : whitePaneSlots) {
+            addItemToInventory(slot, whiteGlassPane, "&r", List.of(""));
+        }
 
-        addItemToInventory(18, new ItemBuilder(redGlassPane).internalName("Close").build(), "&c关闭", List.of(""));
-        addItemToInventory(9, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&bI&fRINA"));
+        addItemToInventory(18, new ItemUtil(redGlassPane).setInternalName("Close").build(), "&c关闭", List.of(""));
+        addItemToInventory(9, new ItemUtil(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + coin, List.of("", "&bI&fRINA"));
     }
 
     @EventHandler

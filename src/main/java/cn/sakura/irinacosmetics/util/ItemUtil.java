@@ -5,6 +5,8 @@ import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -63,6 +65,22 @@ public class ItemUtil {
 
         meta.setLore(toSet);
         this.is.setItemMeta(meta);
+        return this;
+    }
+
+    public ItemUtil shiny() {
+        return this.enchant(Enchantment.LURE, 1).flags(ItemFlag.values());
+    }
+
+    public ItemUtil enchant(Enchantment enchantment, int i) {
+        this.is.addUnsafeEnchantment(enchantment, i);
+        return this;
+    }
+
+    public ItemUtil flags(ItemFlag... flags) {
+        ItemMeta itemMeta = this.is.getItemMeta();
+        itemMeta.addItemFlags(flags);
+        this.is.setItemMeta(itemMeta);
         return this;
     }
 
@@ -174,6 +192,12 @@ public class ItemUtil {
         } else {
             return null;
         }
+    }
+
+    public static ItemStack createGlassPane(short durability) {
+        ItemStack glassPane = new ItemStack(Material.STAINED_GLASS_PANE);
+        glassPane.setDurability(durability);
+        return glassPane;
     }
 
     public ItemStack build() {
