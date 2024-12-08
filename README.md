@@ -1,4 +1,4 @@
-# ThePitCosmetics
+# IrinaCosmetics
 ## Project created on 2024-11-14
 
 <div style="text-align: center">
