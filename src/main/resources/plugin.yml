@@ -1,3 +1,4 @@
 name: IrinaCosmetics
 version: '${project.version}'
+Author: Irina
 main: cn.sakura.irinacosmetics.IrinaCosmetics
