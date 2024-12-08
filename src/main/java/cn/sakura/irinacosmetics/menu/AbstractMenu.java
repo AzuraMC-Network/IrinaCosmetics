@@ -1,6 +1,6 @@
 package cn.sakura.irinacosmetics.menu;
 
-import cn.sakura.irinacosmetics.IrinaCosmetics;
+import cn.sakura.irinacosmetics.data.BalanceManager;
 import cn.sakura.irinacosmetics.game.Register;
 import cn.sakura.irinacosmetics.menu.player.EffectTypeSelect;
 import cn.sakura.irinacosmetics.util.CC;
@@ -15,10 +15,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Register
 public abstract class AbstractMenu implements Listener {
+    protected DecimalFormat df = new DecimalFormat("###,###,###");
     protected Inventory inventory;
 
     public abstract String getMenuName();
@@ -46,28 +48,38 @@ public abstract class AbstractMenu implements Listener {
     }
 
     protected void addFrame(Player player) {
-        ItemStack blackGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        blackGlassPane.setDurability((short) 15);
-        ItemStack redGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        redGlassPane.setDurability((short)14);
-        ItemStack greenGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        greenGlassPane.setDurability((short)13);
-        int coin = IrinaCosmetics.getInstance().getBalance(player.getUniqueId());
+        ItemStack blackGlassPane = createGlassPane((short) 15);
+        ItemStack redGlassPane = createGlassPane((short) 14);
+        ItemStack greenGlassPane = createGlassPane((short) 13);
+
+        int coin = BalanceManager.getBalance(player.getUniqueId());
+
         for (int slots = 45; slots <= 53; slots++) {
-            if (slots == 45 ) {
-                addItemToInventory(slots, new ItemUtil(redGlassPane).setInternalName("close").build(), "&c关闭", List.of(""));
-                continue;
+            switch (slots) {
+                case 45:
+                    addItemToInventory(slots, new ItemUtil(redGlassPane).setInternalName("close").build(), "&c关闭", List.of(""));
+                    break;
+                case 49:
+                    addItemToInventory(slots,
+                            new ItemUtil(new ItemStack(Material.SKULL_ITEM, 1, (short) 3))
+                                    .setSkullOwner(player.getName())
+                                    .build(),
+                            "&7余额: &e" + coin, List.of("", "&bI&fRINA"));
+                    break;
+                case 53:
+                    addItemToInventory(slots, new ItemUtil(greenGlassPane).setInternalName("back").build(), "&a返回", List.of(""));
+                    break;
+                default:
+                    addItemToInventory(slots, blackGlassPane, "&r", List.of(""));
+                    break;
             }
-            if (slots == 49) {
-                addItemToInventory(slots, new ItemUtil(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + coin, List.of("", "&bI&frina Cosmetics"));
-                continue;
-            }
-            if (slots == 53) {
-                addItemToInventory(slots, new ItemUtil(greenGlassPane).setInternalName("back").build(), "&a返回", List.of(""));
-                continue;
-            }
-            addItemToInventory(slots,blackGlassPane, "&r", List.of(""));
         }
+    }
+
+    private ItemStack createGlassPane(short durability) {
+        ItemStack glassPane = new ItemStack(Material.STAINED_GLASS_PANE);
+        glassPane.setDurability(durability);
+        return glassPane;
     }
 
     @EventHandler

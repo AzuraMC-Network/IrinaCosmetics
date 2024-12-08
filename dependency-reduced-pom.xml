@@ -12,7 +12,20 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+    <finalName>ThePitAddon</finalName>
     <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <outputDirectory>${project.basedir}/build</outputDirectory>
+          <archive>
+            <manifest>
+              <mainClass>cn.sakura.irinacosmetics.IrinaCosmetics</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>

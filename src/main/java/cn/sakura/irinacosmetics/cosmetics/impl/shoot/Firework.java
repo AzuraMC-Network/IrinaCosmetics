@@ -32,6 +32,11 @@ public class Firework extends AbstractEffect {
     }
 
     @Override
+    public int getPrice() {
+        return 5000;
+    }
+
+    @Override
     public void handleShoot(Player shooter, Arrow arrow) {
         new BukkitRunnable() {
             @Override

@@ -55,7 +55,7 @@ public class EffectTypeSelect extends AbstractMenu implements Listener {
         addItemToInventory(19, whiteGlassPane, "&r", List.of(""));
 
         addItemToInventory(18, new ItemBuilder(redGlassPane).internalName("Close").build(), "&c关闭", List.of(""));
-        addItemToInventory(9, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&bI&frina Cosmetics"));
+        addItemToInventory(9, new ItemBuilder(new ItemStack(Material.SKULL_ITEM, 1, (short) 3)).setSkullOwner(player.getName()).build(), "&7余额: &e" + (int) profile.getCoins(), List.of("", "&bI&fRINA"));
     }
 
     @EventHandler

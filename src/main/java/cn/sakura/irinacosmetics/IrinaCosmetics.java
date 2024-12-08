@@ -1,6 +1,5 @@
 package cn.sakura.irinacosmetics;
 
-import cn.charlotte.pit.data.PlayerProfile;
 import cn.charlotte.pit.util.command.CommandHandler;
 import cn.sakura.irinacosmetics.util.ClassUtil;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
@@ -9,7 +8,6 @@ import cn.sakura.irinacosmetics.game.Register;
 import cn.sakura.irinacosmetics.util.CC;
 import lombok.Getter;
 import me.yic.xconomy.api.XConomyAPI;
-import me.yic.xconomy.data.syncdata.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -17,14 +15,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public final class IrinaCosmetics extends JavaPlugin implements Listener {
     private static final Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
     private static final Plugin thePitPremiumPlugin = Bukkit.getPluginManager().getPlugin("ThePitPremium");
-    private XConomyAPI xConomyAPI;
-    private final String BalanceType = this.getConfig().getString("BalanceType");
+    public XConomyAPI xConomyAPI;
+    public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
     @Getter
     public static IrinaCosmetics instance;
@@ -40,22 +37,31 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         plugin.saveDefaultConfig();
 
         if (BalanceType != null) {
-            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前方案: " + BalanceType.toUpperCase()));
+            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前经济方案: &f" + BalanceType.toUpperCase()));
             switch (BalanceType.toLowerCase()) {
                 case "xconomy":
                     if (xConomyPlugin != null) {
+                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aXConomy 已加载!"));
                         xConomyAPI = new XConomyAPI();
                     } else {
                         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cXConomy 未加载!"));
                         Bukkit.getPluginManager().disablePlugin(this);
                         return;
                     }
+                    break;
                 case "thepitpremium":
-                    if (thePitPremiumPlugin == null) {
+                    if (thePitPremiumPlugin != null) {
+                        Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aThePitPremium 已加载!"));
+                    } else {
                         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cThePitPremium 未加载!"));
                         Bukkit.getPluginManager().disablePlugin(this);
                         return;
                     }
+                    break;
+                default:
+                    Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&f笨蛋主人, 你认真的吗? 你确定是这个未知方案吗?"));
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
             }
         } else {
             Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c笨蛋主人! 你忘了写 BalanceType 啦!"));
@@ -116,18 +122,5 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         }
     }
 
-    public int getBalance(UUID playerUUID) {
-        switch (BalanceType.toLowerCase()) {
-            case "thepitpremium":
-                PlayerProfile profile = PlayerProfile.getPlayerProfileByUuid(playerUUID);
 
-                return (int) profile.getCoins();
-            case "xconomy":
-                PlayerData playerData = xConomyAPI.getPlayerData(playerUUID);
-
-                return playerData != null ? playerData.getBalance().intValue() : 0;
-            default:
-                return 0;
-        }
-    }
 }

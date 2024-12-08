@@ -33,6 +33,11 @@ public class TestIShootEffect extends AbstractEffect {
     }
 
     @Override
+    public int getPrice() {
+        return 5000;
+    }
+
+    @Override
     public void handleShoot(Player player, Arrow arrow) {
         new BukkitRunnable() {
             @Override

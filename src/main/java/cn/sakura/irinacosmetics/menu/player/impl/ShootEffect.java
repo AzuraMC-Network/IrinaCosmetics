@@ -29,8 +29,6 @@ public class ShootEffect extends AbstractMenu implements Listener {
 
     @Override
     protected void setupItems(Player player) {
-        ItemStack blackGlassPane = new ItemStack(Material.STAINED_GLASS_PANE);
-        blackGlassPane.setDurability((short) 15);
         addItemToInventory(0, new ItemBuilder(Material.BARRIER).internalName("NullEffect").build(), "&a无", List.of("", "&7默认的特效"));
 
         for (int i = 1; i <= Math.min(EffectManager.ShootEffects.size(), 35); i++) {
@@ -42,7 +40,7 @@ public class ShootEffect extends AbstractMenu implements Listener {
                             "",
                             "&7选择 &f" + effect.getDisplayName() + " &7作为你的弹射物轨迹",
                             "",
-                            "&7花费: &65,000",
+                            "&7花费: &6" + df.format(effect.getPrice()),
                             "",
                             "&7[&e点击购买&7]"
                     )

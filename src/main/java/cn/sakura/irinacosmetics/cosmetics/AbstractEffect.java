@@ -14,6 +14,8 @@ public abstract class AbstractEffect {
 
     public abstract ItemStack getIcon();
 
+    public abstract int getPrice();
+
     public abstract void handleShoot(Player shooter, Arrow arrow); //飞行物轨迹
 
     public abstract void handleDeath(Player myself); //亡语

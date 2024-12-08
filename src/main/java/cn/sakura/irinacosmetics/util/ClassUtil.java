@@ -18,7 +18,7 @@ public class ClassUtil {
     }
 
     public static Collection<Class<?>> getClassesInPackage(Object plugin, String packageName) {
-        Collection<Class<?>> classes = new ArrayList();
+        Collection<Class<?>> classes = new ArrayList<>();
         CodeSource codeSource = plugin.getClass().getProtectionDomain().getCodeSource();
         URL resource = codeSource.getLocation();
         String relPath = packageName.replace('.', '/');
@@ -29,8 +29,7 @@ public class ClassUtil {
         try {
             jarFile = new JarFile(jarPath);
         } catch (IOException var17) {
-            IOException e = var17;
-            throw new RuntimeException("Unexpected IOException reading JAR File '" + jarPath + "'", e);
+            throw new RuntimeException("Unexpected IOException reading JAR File '" + jarPath + "'", var17);
         }
 
         Enumeration<JarEntry> entries = jarFile.entries();
@@ -62,8 +61,7 @@ public class ClassUtil {
         try {
             jarFile.close();
         } catch (IOException var15) {
-            IOException e = var15;
-            e.printStackTrace();
+            var15.printStackTrace();
         }
 
         return ImmutableSet.copyOf(classes);
