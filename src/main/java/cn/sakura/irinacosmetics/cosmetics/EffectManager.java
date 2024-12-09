@@ -16,6 +16,7 @@ public class EffectManager {
     private final HashMap<UUID, AbstractEffect> playerKillEffects = new HashMap<>();
     private final HashMap<UUID, AbstractEffect> playerDeathEffects = new HashMap<>();
     private final HashMap<UUID, AbstractEffect> playerShootEffects = new HashMap<>();
+    public static final HashMap<UUID, List<AbstractEffect>> playerUnlockedEffects = new HashMap<>();
     public static final List<AbstractEffect> KillEffects = new ArrayList<>();
     public static final List<AbstractEffect> DeathEffects = new ArrayList<>();
     public static final List<AbstractEffect> ShootEffects = new ArrayList<>();

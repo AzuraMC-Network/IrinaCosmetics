@@ -102,5 +102,12 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/XConomy-Bukkit-2.26.3.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.12.14</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/mongo-java-driver-3.12.14.jar</systemPath>
+    </dependency>
   </dependencies>
 </project>

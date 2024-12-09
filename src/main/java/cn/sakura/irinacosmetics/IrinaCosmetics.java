@@ -1,12 +1,15 @@
 package cn.sakura.irinacosmetics;
 
 import cn.charlotte.pit.util.command.CommandHandler;
+import cn.sakura.irinacosmetics.database.IDatabase;
+import cn.sakura.irinacosmetics.database.Mongo;
 import cn.sakura.irinacosmetics.util.ClassUtil;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
 import cn.sakura.irinacosmetics.game.Register;
 import cn.sakura.irinacosmetics.util.CC;
 import lombok.Getter;
+import lombok.Setter;
 import me.yic.xconomy.api.XConomyAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -21,6 +24,10 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     public XConomyAPI xConomyAPI;
     public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
+
+    @Getter @Setter
+    private IDatabase database;
+
     @Getter
     public static IrinaCosmetics instance;
     public static Plugin plugin;
@@ -74,12 +81,14 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
             loadEffectManager();
             loadCommands();
             loadListener();
+            loadDatabase();
         }, 21L);
     }
 
     @Override
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c期待与你下次再见, 主人"));
+        database.close();
     }
 
     private void loadEffectManager() {
@@ -125,5 +134,8 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         }
     }
 
-
+    private void loadDatabase() {
+        database = new Mongo();
+        database.setUp();
+    }
 }

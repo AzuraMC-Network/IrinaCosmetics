@@ -1,6 +1,5 @@
 package cn.sakura.irinacosmetics.util;
 
-import cn.charlotte.pit.UtilKt;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -205,7 +204,7 @@ public class ItemUtil {
     }
 
     public ItemStack buildWithUnbreakable() {
-        net.minecraft.server.v1_8_R3.ItemStack nmsItem = UtilKt.reflectGetNmsItem(this.is);
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(this.is);
         NBTTagCompound tag = nmsItem.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
