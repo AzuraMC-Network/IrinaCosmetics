@@ -1,9 +1,11 @@
 MongoDataBase:
   database: irinaCosmetics
-  ip: irina.cosmetics
+  ip: cn.sakura.irina
   port: 1337
-  maxConnectionPool: 150
+  user: Irina
+  password: Irina#1337
   minConnectionPool: 10
+  maxConnectionPool: 150
 
 #此段填入你的余额类型 (必填项) [ThePitPremium、XConomy]
 BalanceType: ThePitPremium

@@ -24,9 +24,8 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     public XConomyAPI xConomyAPI;
     public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
-
     @Getter @Setter
-    private IDatabase database;
+    private static IDatabase mongoDataBase;
 
     @Getter
     public static IrinaCosmetics instance;
@@ -88,7 +87,7 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c期待与你下次再见, 主人"));
-        database.close();
+        mongoDataBase.close();
     }
 
     private void loadEffectManager() {
@@ -135,7 +134,7 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     }
 
     private void loadDatabase() {
-        database = new Mongo();
-        database.setUp();
+        mongoDataBase = new Mongo();
+        mongoDataBase.setUp();
     }
 }

@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 @Register
 public class PlayerListener implements Listener {
-    private final IDatabase database = IrinaCosmetics.getInstance().getDatabase();
+    private final IDatabase database = IrinaCosmetics.getMongoDataBase();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
