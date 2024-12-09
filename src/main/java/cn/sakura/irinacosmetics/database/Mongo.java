@@ -17,6 +17,7 @@ import org.bson.UuidRepresentation;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Mongo implements IDatabase{
@@ -74,7 +75,8 @@ public class Mongo implements IDatabase{
                 .append("uuid", data.getUuid())
                 .append("killEffect", data.getKillEffect())
                 .append("deathEffect", data.getDeathEffect())
-                .append("shootEffect", data.getShootEffect());
+                .append("shootEffect", data.getShootEffect())
+                .append("unlockedEffects", data.getUnlockedCosmetics());
 
         player.sendMessage(CC.translate(irina + "&7未检查到档案, 开始创建..."));
         createPlayerProfileByPlayerName("player", doc, data.getPlayerName());
@@ -98,6 +100,7 @@ public class Mongo implements IDatabase{
             data.setDeathEffect((AbstractEffect) result.get("deathEffect"));
             data.setKillEffect((AbstractEffect) result.get("killEffect"));
             data.setShootEffect((AbstractEffect) result.get("shootEffect"));
+            data.setUnlockedEffects((List<AbstractEffect>) result.get("unlockedEffects"));
 
             PlayerData.getData().put(uuid, data);
 
@@ -113,7 +116,8 @@ public class Mongo implements IDatabase{
         PlayerData data = PlayerData.getPlayerData(player);
         Document doc = new Document("deathEffect", data.getDeathEffect())
                 .append("killEffect", data.getKillEffect())
-                .append("shootEffect", data.getShootEffect());
+                .append("shootEffect", data.getShootEffect())
+                .append("unlockedEffects", data.getUnlockedEffects());
 
         updateCollectionByUuid("player", doc, uuid);
     }

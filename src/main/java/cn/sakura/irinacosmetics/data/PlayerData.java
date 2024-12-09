@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class PlayerData {
     private AbstractEffect killEffect;
     private AbstractEffect deathEffect;
     private AbstractEffect shootEffect;
+    private List<AbstractEffect> unlockedEffects;
 
     public PlayerData(Player player) {
         this.player = player;
@@ -34,6 +36,7 @@ public class PlayerData {
         this.killEffect = EffectManager.getInstance().getPlayerKillEffect(player);
         this.deathEffect = EffectManager.getInstance().getPlayerDeathEffect(player);
         this.shootEffect = EffectManager.getInstance().getPlayerShootEffect(player);
+        this.unlockedEffects = getUnlockedCosmetics();
     }
 
     public static PlayerData getPlayerData(Player player) {
