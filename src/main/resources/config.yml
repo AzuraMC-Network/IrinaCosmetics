@@ -1,11 +1,23 @@
 MongoDataBase:
+  #当 EnableVerify 等于 False 时, USER 和 PASSWORD 段将可删除
+  enableVerify: false
+
+  #数据库名称
   database: irinaCosmetics
+  #IP地址
   ip: cn.sakura.irina
+  #端口
   port: 1337
-  user: Irina
+
+  #账户名
+  username: Irina
+  #密码
   password: Irina#1337
-  minConnectionPool: 10
+
+  #最大连接数
   maxConnectionPool: 150
+  #最小连接数
+  minConnectionPool: 10
 
 #此段填入你的余额类型 (必填项) [ThePitPremium、XConomy]
 BalanceType: ThePitPremium

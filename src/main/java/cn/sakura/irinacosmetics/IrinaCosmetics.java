@@ -87,7 +87,7 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c期待与你下次再见, 主人"));
-        mongoDataBase.close();
+        if (mongoDataBase != null) mongoDataBase.close();
     }
 
     private void loadEffectManager() {

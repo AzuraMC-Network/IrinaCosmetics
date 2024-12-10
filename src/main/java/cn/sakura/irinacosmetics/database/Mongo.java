@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bson.Document;
 import org.bson.UuidRepresentation;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -29,8 +30,12 @@ public class Mongo implements IDatabase{
 
     private final Plugin pl = IrinaCosmetics.getInstance();
 
+    private final Boolean enableVerify = pl.getConfig().getBoolean("MongoDataBase.enableVerify");
     private final String ip = pl.getConfig().getString("MongoDataBase.ip");
     private final int port = pl.getConfig().getInt("MongoDataBase.port");
+    private final String databaseName = pl.getConfig().getString("MongoDataBase.database");
+    private final String userName = pl.getConfig().getString("MongoDataBase.username");
+    private final String password = pl.getConfig().getString("MongoDataBase.password");
     private final int maxConnectionPool = pl.getConfig().getInt("MongoDataBase.maxConnectionPool");
     private final int minConnectionPool = pl.getConfig().getInt("MongoDataBase.minConnectionPool");
 
@@ -39,23 +44,49 @@ public class Mongo implements IDatabase{
         try {
             // 自定义连接池设置
             ConnectionPoolSettings connectionPoolSettings = ConnectionPoolSettings.builder()
-                    .maxSize(maxConnectionPool) // 最大连接数
-                    .minSize(minConnectionPool) // 最小连接数
+                    .maxSize(maxConnectionPool > 0 ? maxConnectionPool : 10) // 确保最大连接数有效
+                    .minSize(minConnectionPool >= 0 ? minConnectionPool : 1) // 确保最小连接数非负
                     .build();
+
+            // 构建连接字符串
+            String connectionString = enableVerify ?
+                    String.format("mongodb://%s:%s@%s:%d/%s", userName, password, ip, port, databaseName) :
+                    String.format("mongodb://%s:%d/%s", ip, port, databaseName);
 
             // 自定义 MongoClient 设置
             MongoClientSettings settings = MongoClientSettings.builder()
-                    .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
-                    .applyConnectionString(new com.mongodb.ConnectionString("mongodb://"+ ip + ":" + port))
+                    .uuidRepresentation(UuidRepresentation.JAVA_LEGACY) // 兼容旧版 Java 的 UUID 格式
+                    .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
                     .applyToConnectionPoolSettings(builder -> builder.applySettings(connectionPoolSettings))
                     .build();
 
             // 创建 MongoClient 实例
             mongoClient = MongoClients.create(settings);
-            // 获取数据库
-            setDatabase(mongoClient.getDatabase(pl.getConfig().getString("MongoDataBase.database")));
+
+            // 获取数据库名称
+            String dbName = pl.getConfig().getString("MongoDataBase.database");
+            if (dbName == null || dbName.isEmpty()) {
+                throw new IllegalArgumentException("配置中未指定数据库名称");
+            }
+
+            // 检查并连接数据库
+            MongoDatabase database = mongoClient.getDatabase(dbName);
+            database.runCommand(new Document("ping", 1)); // 检测连接是否成功
+
+            // 自动创建数据库
+            database.getCollection("test_collection").insertOne(new Document("key", "value")); // 自动触发数据库创建
+            database.getCollection("test_collection").deleteMany(new Document()); // 清除临时数据
+
+            // 设置数据库
+            setDatabase(database);
+
+            System.out.println("MongoDB 数据库已成功连接或创建：" + dbName);
+        } catch (IllegalArgumentException e) {
+            System.err.println("配置错误: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(IrinaCosmetics.getInstance());
         } catch (Exception e) {
-            System.err.println("初始化MongoDB连接异常: " + e.getMessage());
+            System.err.println("初始化 MongoDB 连接异常: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(IrinaCosmetics.getInstance());
         }
     }
 
@@ -68,7 +99,6 @@ public class Mongo implements IDatabase{
 
     @Override
     public void createPlayerData(Player player) {
-
         PlayerData data = getData(player);
         Document doc = new Document("playerName", data.getPlayerName())
                 .append("lowName", data.getPlayerLowName())

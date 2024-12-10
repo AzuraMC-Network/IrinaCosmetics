@@ -11,7 +11,7 @@ import java.util.logging.Level;
 
 public class EffectManager {
     @Getter
-    private static final EffectManager instance = new EffectManager();
+    public static final EffectManager instance = new EffectManager();
 
     private final HashMap<UUID, AbstractEffect> playerKillEffects = new HashMap<>();
     private final HashMap<UUID, AbstractEffect> playerDeathEffects = new HashMap<>();
@@ -24,7 +24,6 @@ public class EffectManager {
     private final HashMap<String, AbstractEffect> effectMap = new HashMap<>();
 
     private EffectManager() {}
-
     /**
      * 初始化特效
      * @param classes 要加载的特效类集合

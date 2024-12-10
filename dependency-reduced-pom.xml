@@ -32,6 +32,13 @@
         <configuration>
           <source>9</source>
           <target>9</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>1.18.36</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>
@@ -62,7 +69,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.34</version>
+      <version>1.18.36</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -85,6 +92,13 @@
       <version>2.26.3</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/XConomy-Bukkit-2.26.3.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.12.14</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/mongo-java-driver-3.12.14.jar</systemPath>
     </dependency>
   </dependencies>
   <properties>
