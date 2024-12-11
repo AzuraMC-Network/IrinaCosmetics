@@ -144,6 +144,10 @@ public class EffectManager {
         return playerShootEffects.get(player.getUniqueId());
     }
 
+    public List<AbstractEffect> getPlayerUnlockedCosmetics(Player player) {
+        return playerUnlockedEffects.get(player.getUniqueId());
+    }
+
     public void setPlayerShootEffect(Player player, String effectName) {
         AbstractEffect effect = getEffect(effectName);
         if (effect != null) {

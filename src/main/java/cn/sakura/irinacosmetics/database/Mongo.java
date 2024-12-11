@@ -2,6 +2,7 @@ package cn.sakura.irinacosmetics.database;
 
 import cn.sakura.irinacosmetics.IrinaCosmetics;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
+import cn.sakura.irinacosmetics.cosmetics.EffectManager;
 import cn.sakura.irinacosmetics.data.PlayerData;
 import cn.sakura.irinacosmetics.util.CC;
 import com.mongodb.MongoClientSettings;
@@ -21,31 +22,45 @@ import org.bukkit.plugin.Plugin;
 import java.util.List;
 import java.util.UUID;
 
-public class Mongo implements IDatabase{
+public class Mongo implements IDatabase {
     private final String irina = IrinaCosmetics.irina;
     private MongoClient mongoClient;
+
     @Getter
     @Setter
     private MongoDatabase database;
 
-    private final Plugin pl = IrinaCosmetics.getInstance();
+    private final Plugin plugin = IrinaCosmetics.getInstance();
 
-    private final Boolean enableVerify = pl.getConfig().getBoolean("MongoDataBase.enableVerify");
-    private final String ip = pl.getConfig().getString("MongoDataBase.ip");
-    private final int port = pl.getConfig().getInt("MongoDataBase.port");
-    private final String databaseName = pl.getConfig().getString("MongoDataBase.database");
-    private final String userName = pl.getConfig().getString("MongoDataBase.username");
-    private final String password = pl.getConfig().getString("MongoDataBase.password");
-    private final int maxConnectionPool = pl.getConfig().getInt("MongoDataBase.maxConnectionPool");
-    private final int minConnectionPool = pl.getConfig().getInt("MongoDataBase.minConnectionPool");
+    // MongoDB 配置信息
+    private final boolean enableVerify;
+    private final String ip;
+    private final int port;
+    private final String databaseName;
+    private final String userName;
+    private final String password;
+    private final int maxConnectionPool;
+    private final int minConnectionPool;
+
+    public Mongo() {
+        // 从配置文件加载
+        enableVerify = plugin.getConfig().getBoolean("MongoDataBase.enableVerify");
+        ip = plugin.getConfig().getString("MongoDataBase.ip");
+        port = plugin.getConfig().getInt("MongoDataBase.port");
+        databaseName = plugin.getConfig().getString("MongoDataBase.database");
+        userName = plugin.getConfig().getString("MongoDataBase.username");
+        password = plugin.getConfig().getString("MongoDataBase.password");
+        maxConnectionPool = plugin.getConfig().getInt("MongoDataBase.maxConnectionPool", 10);
+        minConnectionPool = plugin.getConfig().getInt("MongoDataBase.minConnectionPool", 1);
+    }
 
     @Override
     public void setUp() {
         try {
-            // 自定义连接池设置
-            ConnectionPoolSettings connectionPoolSettings = ConnectionPoolSettings.builder()
-                    .maxSize(maxConnectionPool > 0 ? maxConnectionPool : 10) // 确保最大连接数有效
-                    .minSize(minConnectionPool >= 0 ? minConnectionPool : 1) // 确保最小连接数非负
+            // 连接池设置
+            ConnectionPoolSettings poolSettings = ConnectionPoolSettings.builder()
+                    .maxSize(Math.max(maxConnectionPool, 150))
+                    .minSize(Math.max(minConnectionPool, 10))
                     .build();
 
             // 构建连接字符串
@@ -53,40 +68,26 @@ public class Mongo implements IDatabase{
                     String.format("mongodb://%s:%s@%s:%d/%s", userName, password, ip, port, databaseName) :
                     String.format("mongodb://%s:%d/%s", ip, port, databaseName);
 
-            // 自定义 MongoClient 设置
+            // MongoDB 设置
             MongoClientSettings settings = MongoClientSettings.builder()
-                    .uuidRepresentation(UuidRepresentation.JAVA_LEGACY) // 兼容旧版 Java 的 UUID 格式
+                    .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
                     .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
-                    .applyToConnectionPoolSettings(builder -> builder.applySettings(connectionPoolSettings))
+                    .applyToConnectionPoolSettings(builder -> builder.applySettings(poolSettings))
                     .build();
 
-            // 创建 MongoClient 实例
+            // 创建 MongoClient
             mongoClient = MongoClients.create(settings);
 
-            // 获取数据库名称
-            String dbName = pl.getConfig().getString("MongoDataBase.database");
-            if (dbName == null || dbName.isEmpty()) {
-                throw new IllegalArgumentException("配置中未指定数据库名称");
-            }
+            // 检测数据库连接
+            MongoDatabase db = mongoClient.getDatabase(databaseName);
+            db.runCommand(new Document("ping", 1));
+            db.createCollection("player");
 
-            // 检查并连接数据库
-            MongoDatabase database = mongoClient.getDatabase(dbName);
-            database.runCommand(new Document("ping", 1)); // 检测连接是否成功
-
-            // 自动创建数据库
-            database.getCollection("test_collection").insertOne(new Document("key", "value")); // 自动触发数据库创建
-            database.getCollection("test_collection").deleteMany(new Document()); // 清除临时数据
-
-            // 设置数据库
-            setDatabase(database);
-
-            System.out.println("MongoDB 数据库已成功连接或创建：" + dbName);
-        } catch (IllegalArgumentException e) {
-            System.err.println("配置错误: " + e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(IrinaCosmetics.getInstance());
+            setDatabase(db);
+            plugin.getLogger().info("MongoDB 数据库连接成功: " + databaseName);
         } catch (Exception e) {
-            System.err.println("初始化 MongoDB 连接异常: " + e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(IrinaCosmetics.getInstance());
+            plugin.getLogger().severe("MongoDB 初始化失败: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(plugin);
         }
     }
 
@@ -94,6 +95,7 @@ public class Mongo implements IDatabase{
     public void close() {
         if (mongoClient != null) {
             mongoClient.close();
+            plugin.getLogger().info("MongoDB 连接已关闭。");
         }
     }
 
@@ -103,33 +105,33 @@ public class Mongo implements IDatabase{
         Document doc = new Document("playerName", data.getPlayerName())
                 .append("lowName", data.getPlayerLowName())
                 .append("uuid", data.getUuid())
-                .append("killEffect", data.getKillEffect())
-                .append("deathEffect", data.getDeathEffect())
-                .append("shootEffect", data.getShootEffect())
-                .append("unlockedEffects", data.getUnlockedCosmetics());
+                .append("killEffect", data.getKillEffect().getEffectInternalName())
+                .append("deathEffect", data.getDeathEffect().getEffectInternalName())
+                .append("shootEffect", data.getShootEffect().getEffectInternalName())
+                .append("unlockedEffects", data.getUnlockedEffects());
 
         player.sendMessage(CC.translate(irina + "&7未检查到档案, 开始创建..."));
-        createPlayerProfileByPlayerName("player", doc, data.getPlayerName());
+        createPlayerProfile("player", doc, data.getUuid());
         player.sendMessage(CC.translate(irina + "&a创建成功!"));
-
     }
 
     @Override
     public void loadPlayerData(Player player) {
         UUID uuid = player.getUniqueId();
-        MongoCollection<Document> collection = getDatabase().getCollection("player");
+        MongoCollection<Document> collection = database.getCollection("player");
 
-        Document query = new Document("uuid", uuid.toString());
+        Document query = new Document("uuid", uuid);
         Document result = collection.find(query).first();
 
         if (result != null) {
             PlayerData data = new PlayerData(player);
+            EffectManager effectManager = EffectManager.getInstance();
+            data.setUuid(UUID.fromString(result.getString("uuid")));  // 确保读取UUID时的格式正确
             data.setPlayerName(result.getString("playerName"));
             data.setPlayerLowName(result.getString("lowName"));
-            data.setUuid(UUID.fromString(result.getString("uuid")));
-            data.setDeathEffect((AbstractEffect) result.get("deathEffect"));
-            data.setKillEffect((AbstractEffect) result.get("killEffect"));
-            data.setShootEffect((AbstractEffect) result.get("shootEffect"));
+            data.setDeathEffect(effectManager.getEffect(result.getString("deathEffect")));
+            data.setKillEffect(effectManager.getEffect(result.getString("killEffect")));
+            data.setShootEffect(effectManager.getEffect(result.getString("shootEffect")));
             data.setUnlockedEffects((List<AbstractEffect>) result.get("unlockedEffects"));
 
             PlayerData.getData().put(uuid, data);
@@ -143,96 +145,72 @@ public class Mongo implements IDatabase{
     @Override
     public void savePlayerData(Player player) {
         UUID uuid = player.getUniqueId();
-        PlayerData data = PlayerData.getPlayerData(player);
+        PlayerData data = PlayerData.getData().get(uuid);
+
+        // 在保存时要检查 PlayerData 是否为空
+        if (data == null) {
+            plugin.getLogger().warning("玩家数据不存在，无法保存数据: " + player.getName());
+            return;
+        }
+
         Document doc = new Document("deathEffect", data.getDeathEffect())
-                .append("killEffect", data.getKillEffect())
-                .append("shootEffect", data.getShootEffect())
+                .append("killEffect", data.getKillEffect().getEffectInternalName())
+                .append("shootEffect", data.getShootEffect().getEffectInternalName())
                 .append("unlockedEffects", data.getUnlockedEffects());
 
-        updateCollectionByUuid("player", doc, uuid);
+        updateCollectionByUuid("player", doc, uuid);  // 确保保存时UUID正确
     }
 
     @Override
     public void removePlayerData(Player player) {
-        PlayerData.getData().remove(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        PlayerData.getData().remove(uuid);  // 在退出时清除玩家数据
     }
 
     @Override
     public PlayerData getData(Player player) {
         UUID uuid = player.getUniqueId();
-        if (!PlayerData.getData().containsKey(uuid)) {
-            PlayerData newData = new PlayerData(player);
-            PlayerData.getData().put(uuid, newData);
-        }
-        return PlayerData.getData().get(uuid);
+        return PlayerData.getData().computeIfAbsent(uuid, k -> new PlayerData(player));  // 如果没有数据则创建
     }
 
-    /**
-     * 插入内容到集合
-     * @param collectionName 集合名称
-     * @param document 要插入的文档
-     * @param uuid 玩家的uuid
-     */
     public void updateCollectionByUuid(String collectionName, Document document, UUID uuid) {
-        if (getDatabase() == null) {
-            throw new IllegalStateException("数据库尚未连接。");
-        }
-        MongoCollection<Document> collection = getDatabase().getCollection(collectionName);
+        MongoCollection<Document> collection = database.getCollection(collectionName);
         Document query = new Document("uuid", uuid.toString());
         Document updateValue = new Document("$set", document);
 
-        if (isExistValueInCollection(collectionName, "uuid", uuid.toString())) {
-            collection.updateOne(query, updateValue);
+        if (isExistValueInCollection(collectionName, "uuid", uuid)) {
+            collection.updateOne(query, updateValue);  // 如果存在就更新
         } else {
-            System.err.print("严重错误 | 玩家数据文档不存在但却执行了更新操作");
+            plugin.getLogger().severe("玩家数据文档不存在但却执行了更新操作: " + uuid);
         }
     }
 
-    /**
-     * 插入内容到集合
-     * @param collectionName 集合名称
-     * @param document 要插入的文档
-     */
-    public void createPlayerProfileByPlayerName(String collectionName, Document document, String playerName) {
-        if (getDatabase() == null) {
-            throw new IllegalStateException("数据库尚未连接。");
-        }
-        MongoCollection<Document> collection = getDatabase().getCollection(collectionName);
-
-        if (!isExistValueInCollection(collectionName, "playerName", playerName)) {
+    public void createPlayerProfile(String collectionName, Document document, UUID uuid) {
+        MongoCollection<Document> collection = database.getCollection(collectionName);
+        if (!isExistValueInCollection(collectionName, "playerName", uuid)) {
             collection.insertOne(document);
         }
     }
 
-    /**
-     * 查询集合内容是否存在
-     * @param collectionName 想要查询的集合名
-     * @param checkType 想要查询的类型
-     * @param checkValue 想要查询的内容
-     * @return 找到返回true
-     */
-    public boolean isExistValueInCollection(String collectionName, String checkType, String checkValue) {
-        MongoCollection<Document> collection = getDatabase().getCollection(collectionName);
+    public boolean isExistValueInCollection(String collectionName, String checkType, UUID checkValue) {
 
-        Document query = new Document(checkType, checkValue);
-        Document result = collection.find(query).first(); // 获取第一条匹配的记录
+        if (database == null) {
+            plugin.getLogger().warning("数据库未初始化");
+            return false;  // 如果数据库对象为 null，返回 false
+        }
+
+        // 获取 MongoDB 集合
+        MongoCollection<Document> collection = database.getCollection(collectionName);
+
+        // 使用 countDocuments 来提高效率
+        Document query = new Document(checkType, checkValue.toString());
+        Document result = collection.find(query).first();
 
         return result != null;
     }
 
-    /**
-     * 查询集合中是否存在此玩家
-     * @param collectionName 想要查询的集合名
-     * @param playerName 玩家名
-     * @return 找到返回true
-     */
     @Override
-    public boolean isExistPlayerProfile(String collectionName, String playerName) {
-        MongoCollection<Document> collection = getDatabase().getCollection(collectionName);
-
-        Document query = new Document("playerName", playerName);
-        Document result = collection.find(query).first(); // 获取第一条匹配的记录
-
-        return result != null;
+    public boolean isExistPlayerProfile(String collectionName, UUID uuid) {
+        return isExistValueInCollection(collectionName, "uuid", uuid);
     }
 }

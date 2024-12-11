@@ -3,6 +3,8 @@ package cn.sakura.irinacosmetics.database;
 import cn.sakura.irinacosmetics.data.PlayerData;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public interface IDatabase {
     void setUp();
     void close();
@@ -11,5 +13,5 @@ public interface IDatabase {
     void savePlayerData(Player player);
     void removePlayerData(Player player);
     PlayerData getData(Player player);
-    boolean isExistPlayerProfile(String collectionName, String playerName);
+    boolean isExistPlayerProfile(String collectionName, UUID uuid);
 }

@@ -78,9 +78,10 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
             }
 
             loadEffectManager();
-            loadCommands();
+//            loadCommands();
             loadListener();
-            loadDatabase();
+            mongoDataBase = new Mongo();
+            mongoDataBase.setUp();
         }, 21L);
     }
 
@@ -116,9 +117,9 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         }
     }
 
-    private void loadCommands() {
-        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.irinacosmetics.command");
-    }
+//    private void loadCommands() {
+//        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.irinacosmetics.command");
+//    }
 
     private void loadListener() {
         Collection<Class<?>> classes = ClassUtil.getClassesInPackage(this, "cn.sakura.irinacosmetics");
@@ -131,10 +132,5 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
                 }
             }
         }
-    }
-
-    private void loadDatabase() {
-        mongoDataBase = new Mongo();
-        mongoDataBase.setUp();
     }
 }
