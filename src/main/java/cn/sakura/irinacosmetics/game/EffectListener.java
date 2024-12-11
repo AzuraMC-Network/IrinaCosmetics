@@ -2,6 +2,7 @@ package cn.sakura.irinacosmetics.game;
 
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
+import cn.sakura.irinacosmetics.cosmetics.EffectType;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,13 +17,9 @@ public class EffectListener implements Listener {
         if (!(e.getEntity().getShooter() instanceof Player)) return;
 
         Player player = (Player) e.getEntity().getShooter();
-        AbstractEffect effect = EffectManager.getInstance().getPlayerShootEffect(player);
+        AbstractEffect effect = EffectManager.getInstance().getPlayerEffect(player, EffectType.SHOOT);
 
-        if (effect != null) {
-            if (e.getEntity() instanceof Arrow) {
-                effect.handleShoot(player, (Arrow) e.getEntity());
-            }
-        }
+        if (effect != null && e.getEntity() instanceof Arrow) effect.handleShoot(player, (Arrow) e.getEntity());
     }
 
     @EventHandler
@@ -31,20 +28,16 @@ public class EffectListener implements Listener {
         Player killer = e.getEntity().getKiller();
         if (killer == null) return;
 
-        AbstractEffect effect = EffectManager.getInstance().getPlayerKillEffect(killer);
+        AbstractEffect effect = EffectManager.getInstance().getPlayerEffect(killer, EffectType.KILL);
 
-        if (effect != null) {
-            effect.handleKill(target);
-        }
+        if (effect != null) effect.handleKill(target);
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player myself = e.getEntity();
 
-        AbstractEffect effect = EffectManager.getInstance().getPlayerDeathEffect(myself);
-        if (effect != null) {
-            effect.handleDeath(myself);
-        }
+        AbstractEffect effect = EffectManager.getInstance().getPlayerEffect(myself, EffectType.DEATH);
+        if (effect != null) effect.handleDeath(myself);
     }
 }

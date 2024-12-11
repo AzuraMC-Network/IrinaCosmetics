@@ -10,13 +10,14 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class EffectManager {
+    private static final String irina = IrinaCosmetics.irina;
     @Getter
     public static final EffectManager instance = new EffectManager();
 
     private final HashMap<UUID, AbstractEffect> playerKillEffects = new HashMap<>();
     private final HashMap<UUID, AbstractEffect> playerDeathEffects = new HashMap<>();
     private final HashMap<UUID, AbstractEffect> playerShootEffects = new HashMap<>();
-    public static final HashMap<UUID, List<AbstractEffect>> playerUnlockedEffects = new HashMap<>();
+    public static final HashMap<UUID, List<String>> playerUnlockedEffects = new HashMap<>();
     public static final List<AbstractEffect> KillEffects = new ArrayList<>();
     public static final List<AbstractEffect> DeathEffects = new ArrayList<>();
     public static final List<AbstractEffect> ShootEffects = new ArrayList<>();
@@ -29,7 +30,7 @@ public class EffectManager {
      * @param classes 要加载的特效类集合
      */
     public void init(Collection<Class<? extends AbstractEffect>> classes) {
-        Bukkit.getLogger().info(CC.translate(IrinaCosmetics.irina + "&e正在加载特效"));
+        Bukkit.getLogger().info(CC.translate(irina + "&e正在加载特效"));
 
         int loadedCount = 0;
 
@@ -40,11 +41,11 @@ public class EffectManager {
                 loadedCount++;
             } catch (Exception e) {
                 Bukkit.getLogger().log(Level.WARNING,
-                        CC.translate(IrinaCosmetics.irina + "&c加载特效 " + effectClass.getName() + " 时出现错误:"), e);
+                        CC.translate(irina + "&c加载特效 " + effectClass.getName() + " 时出现错误:"), e);
             }
         }
 
-        Bukkit.getLogger().info(CC.translate(IrinaCosmetics.irina + "&a已加载 &e" + loadedCount + " &a个特效!"));
+        Bukkit.getLogger().info(CC.translate(irina + "&a已加载 &e" + loadedCount + " &a个特效!"));
     }
 
     /**
@@ -53,7 +54,7 @@ public class EffectManager {
      */
     public void registerEffect(AbstractEffect effect) {
         if (effectMap.containsKey(effect.getEffectInternalName())) {
-            Bukkit.getLogger().warning(CC.translate(IrinaCosmetics.irina + "&&c特效 "
+            Bukkit.getLogger().warning(CC.translate(irina + "&&c特效 "
                     + effect.getEffectInternalName() + " | " + effect.getDisplayName() + " 已存在，跳过注册。"));
             return;
         }
@@ -73,7 +74,7 @@ public class EffectManager {
         }
 
         effectMap.put(effect.getEffectInternalName(), effect);
-        Bukkit.getLogger().info(CC.translate(IrinaCosmetics.irina + "&a特效 "
+        Bukkit.getLogger().info(CC.translate(irina + "&a特效 "
                 + effect.getEffectInternalName() + " | " + effect.getDisplayName() + " 注册成功!"));
     }
 
@@ -83,7 +84,7 @@ public class EffectManager {
      * @return 特效实例或null
      */
     public AbstractEffect getEffect(String effectName) {
-        return effectMap.get(effectName);
+        return effectMap.getOrDefault(effectName, null);
     }
 
     /**
@@ -102,11 +103,11 @@ public class EffectManager {
         AbstractEffect effect = effectMap.remove(effectInternalName);
         if (effect != null) {
             effects.remove(effect);
-            Bukkit.getLogger().info(CC.translate(IrinaCosmetics.irina + "&a特效 "
+            Bukkit.getLogger().info(CC.translate(irina + "&a特效 "
                     + effectInternalName + " 已移除!"));
             return;
         }
-        Bukkit.getLogger().warning(CC.translate(IrinaCosmetics.irina + "&c尝试移除特效 "
+        Bukkit.getLogger().warning(CC.translate(irina + "&c尝试移除特效 "
                 + effectInternalName + " 但未找到。"));
     }
 
@@ -125,78 +126,70 @@ public class EffectManager {
             // 注册新的特效
             registerEffect(newEffect);
 
-            Bukkit.getLogger().info(CC.translate(IrinaCosmetics.irina + "&a特效 "
+            Bukkit.getLogger().info(CC.translate(irina + "&a特效 "
                     + effectName + " 已成功重新加载!"));
         } catch (Exception e) {
-            Bukkit.getLogger().log(Level.WARNING, CC.translate(IrinaCosmetics.irina + "&c重新加载特效 " + effectClass.getName() + " 时出现错误:"), e);
+            Bukkit.getLogger().log(Level.WARNING, CC.translate(irina + "&c重新加载特效 " + effectClass.getName() + " 时出现错误:"), e);
         }
     }
 
-    public AbstractEffect getPlayerKillEffect(Player player) {
-        return playerKillEffects.get(player.getUniqueId());
+    public List<String> getPlayerUnlockedEffects(Player player) {
+        return playerUnlockedEffects.computeIfAbsent(player.getUniqueId(), k -> new ArrayList<>());
     }
 
-    public AbstractEffect getPlayerDeathEffect(Player player) {
-        return playerDeathEffects.get(player.getUniqueId());
+
+    public AbstractEffect getPlayerEffect(Player player, EffectType effectType) {
+        switch (effectType) {
+            case DEATH:
+                return playerDeathEffects.get(player.getUniqueId());
+            case KILL:
+                return playerKillEffects.get(player.getUniqueId());
+            case SHOOT:
+                return playerShootEffects.get(player.getUniqueId());
+            default:
+                return null;
+        }
     }
 
-    public AbstractEffect getPlayerShootEffect(Player player) {
-        return playerShootEffects.get(player.getUniqueId());
-    }
-
-    public List<AbstractEffect> getPlayerUnlockedCosmetics(Player player) {
-        return playerUnlockedEffects.get(player.getUniqueId());
-    }
-
-    public void setPlayerShootEffect(Player player, String effectName) {
+    public void setPlayerEffect(Player player, String effectName, EffectType effectType) {
         AbstractEffect effect = getEffect(effectName);
         if (effect != null) {
-            playerShootEffects.put(player.getUniqueId(), effect);
-            player.sendMessage(CC.translate("&a特效 &f" + effect.getDisplayName() + " &a已启用!"));
+            switch (effectType) {
+                case SHOOT:
+                    playerShootEffects.put(player.getUniqueId(), effect);
+                    break;
+                case DEATH:
+                    playerDeathEffects.put(player.getUniqueId(), effect);
+                    break;
+                case KILL:
+                    playerKillEffects.put(player.getUniqueId(), effect);
+                    break;
+            }
+            player.sendMessage(CC.translate(irina + "&a特效 &f" + effect.getDisplayName() + " &a已启用!"));
         } else {
-            player.sendMessage(CC.translate("&c特效 &f" + effectName + " &c不存在!"));
+            player.sendMessage(CC.translate(irina + "&c特效 &f" + effectName + " &c不存在!"));
         }
     }
 
-    public void setPlayerKillEffect(Player player, String effectName) {
-        AbstractEffect effect = getEffect(effectName);
-        if (effect != null) {
-            playerKillEffects.put(player.getUniqueId(), effect);
-            player.sendMessage(CC.translate("&a特效 &f" + effect.getDisplayName() + " &a已启用!"));
-        } else {
-            player.sendMessage(CC.translate("&c特效 &f" + effectName + " &c不存在!"));
+    public void removePlayerEffect(Player player, EffectType effectType) {
+        switch (effectType) {
+            case SHOOT:
+                playerShootEffects.remove(player.getUniqueId());
+                break;
+            case KILL:
+                playerKillEffects.remove(player.getUniqueId());
+                break;
+            case DEATH:
+                playerDeathEffects.remove(player.getUniqueId());
+                break;
         }
-    }
-
-    public void setPlayerDeathEffect(Player player, String effectName) {
-        AbstractEffect effect = getEffect(effectName);
-        if (effect != null) {
-            playerDeathEffects.put(player.getUniqueId(), effect);
-            player.sendMessage(CC.translate("&a特效 &f" + effect.getDisplayName() + " &a已启用!"));
-        } else {
-            player.sendMessage(CC.translate("&c特效 &f" + effectName + " &c不存在!"));
-        }
-    }
-
-    public void removePlayerKillEffect(Player player) {
-        playerKillEffects.remove(player.getUniqueId());
-        player.sendMessage(CC.translate("&c特效已关闭"));
-    }
-
-    public void removePlayerDeathEffect(Player player) {
-        playerDeathEffects.remove(player.getUniqueId());
-        player.sendMessage(CC.translate("&c特效已关闭"));
-    }
-
-    public void removePlayerShootEffect(Player player) {
-        playerShootEffects.remove(player.getUniqueId());
-        player.sendMessage(CC.translate("&c特效已关闭"));
+        player.sendMessage(CC.translate(irina + "&c特效已关闭"));
     }
 
     public void removePlayerAllEffect(Player player) {
         playerShootEffects.remove(player.getUniqueId());
         playerDeathEffects.remove(player.getUniqueId());
         playerKillEffects.remove(player.getUniqueId());
-        player.sendMessage(CC.translate("&c特效已全部关闭"));
+        player.sendMessage(CC.translate(irina + "&c特效已全部关闭"));
     }
 }

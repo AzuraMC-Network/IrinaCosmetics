@@ -4,6 +4,7 @@ package cn.sakura.irinacosmetics.command;
 import cn.charlotte.pit.util.command.Command;
 import cn.charlotte.pit.util.command.param.Parameter;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
+import cn.sakura.irinacosmetics.cosmetics.EffectType;
 import org.bukkit.entity.Player;
 
 public class EnableEffect {
@@ -12,19 +13,21 @@ public class EnableEffect {
             permissionNode = "pit.admin"
     )
     public void enableEffect(Player player, @Parameter(name = "BOOLEAN") String Boolean, @Parameter(name = "EffectInternalName") String EffectInternalName) {
+        EffectType EFFECT_TYPE = null;
         switch (Boolean) {
             case "remove":
                 EffectManager.getInstance().removePlayerAllEffect(player);
                 break;
             case "kill":
-                EffectManager.getInstance().setPlayerKillEffect(player, EffectInternalName);
+                EFFECT_TYPE = EffectType.KILL;
                 break;
             case "death":
-                EffectManager.getInstance().setPlayerDeathEffect(player, EffectInternalName);
+                EFFECT_TYPE = EffectType.DEATH;
                 break;
             case "shoot":
-                EffectManager.getInstance().setPlayerShootEffect(player, EffectInternalName);
+                EFFECT_TYPE = EffectType.SHOOT;
                 break;
         }
+        EffectManager.getInstance().setPlayerEffect(player, EffectInternalName, EFFECT_TYPE);
     }
 }

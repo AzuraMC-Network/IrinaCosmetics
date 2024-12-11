@@ -1,9 +1,9 @@
 package cn.sakura.irinacosmetics.cosmetics.impl.death;
 
-import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectType;
 import cn.sakura.irinacosmetics.util.CC;
+import cn.sakura.irinacosmetics.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Arrow;
@@ -29,7 +29,7 @@ public class TestDeathEffect extends AbstractEffect {
 
     @Override
     public ItemStack getIcon() {
-        return new ItemBuilder(Material.BOW).shiny().build();
+        return new ItemUtil(Material.BOW).shiny().build();
     }
 
     @Override

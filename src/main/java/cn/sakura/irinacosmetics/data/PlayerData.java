@@ -2,6 +2,7 @@ package cn.sakura.irinacosmetics.data;
 
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
+import cn.sakura.irinacosmetics.cosmetics.EffectType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -12,7 +13,9 @@ import java.util.*;
 @Setter
 public class PlayerData {
     @Getter
-    private static final Map<UUID, PlayerData> data = new HashMap<>();
+    public static final Map<UUID, PlayerData> data = new HashMap<>();
+
+    private EffectManager effectManager = EffectManager.getInstance();
 
     private String playerLowName;
     private String playerName;
@@ -21,7 +24,7 @@ public class PlayerData {
     private AbstractEffect killEffect;
     private AbstractEffect deathEffect;
     private AbstractEffect shootEffect;
-    private List<AbstractEffect> unlockedEffects;
+    private List<String> unlockedEffects;
 
     /**
      * 构造函数，初始化玩家数据。
@@ -33,9 +36,13 @@ public class PlayerData {
         this.uuid = player.getUniqueId();
         this.playerName = player.getName();
         this.playerLowName = playerName.toLowerCase();
-        this.killEffect = EffectManager.getInstance().getPlayerKillEffect(player);
-        this.deathEffect = EffectManager.getInstance().getPlayerDeathEffect(player);
-        this.shootEffect = EffectManager.getInstance().getPlayerShootEffect(player);
-        this.unlockedEffects = EffectManager.getInstance().getPlayerUnlockedCosmetics(player);
+        this.killEffect = effectManager.getPlayerEffect(player, EffectType.KILL) != null ? effectManager.getPlayerEffect(player, EffectType.KILL) : null;
+        this.deathEffect = effectManager.getPlayerEffect(player, EffectType.DEATH) != null ? effectManager.getPlayerEffect(player, EffectType.DEATH) : null;
+        this.shootEffect = effectManager.getPlayerEffect(player, EffectType.SHOOT) != null ? effectManager.getPlayerEffect(player, EffectType.SHOOT) : null;
+        this.unlockedEffects = effectManager.getPlayerUnlockedEffects(player);
+    }
+
+    public static PlayerData getPlayerData(Player player) {
+        return data.getOrDefault(player.getUniqueId(), new PlayerData(player));
     }
 }

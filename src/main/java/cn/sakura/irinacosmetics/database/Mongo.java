@@ -1,8 +1,8 @@
 package cn.sakura.irinacosmetics.database;
 
 import cn.sakura.irinacosmetics.IrinaCosmetics;
-import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
+import cn.sakura.irinacosmetics.cosmetics.EffectType;
 import cn.sakura.irinacosmetics.data.PlayerData;
 import cn.sakura.irinacosmetics.util.CC;
 import com.mongodb.MongoClientSettings;
@@ -19,7 +19,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Mongo implements IDatabase {
@@ -29,66 +31,60 @@ public class Mongo implements IDatabase {
     @Getter
     @Setter
     private MongoDatabase database;
+    @Getter
+    private final Mongo instance;
 
     private final Plugin plugin = IrinaCosmetics.getInstance();
 
-    // MongoDB 配置信息
-    private final boolean enableVerify;
-    private final String ip;
-    private final int port;
-    private final String databaseName;
-    private final String userName;
-    private final String password;
-    private final int maxConnectionPool;
-    private final int minConnectionPool;
+    private final Map<String, Object> config;
+    private final EffectManager effectManager = EffectManager.getInstance();
 
     public Mongo() {
-        // 从配置文件加载
-        enableVerify = plugin.getConfig().getBoolean("MongoDataBase.enableVerify");
-        ip = plugin.getConfig().getString("MongoDataBase.ip");
-        port = plugin.getConfig().getInt("MongoDataBase.port");
-        databaseName = plugin.getConfig().getString("MongoDataBase.database");
-        userName = plugin.getConfig().getString("MongoDataBase.username");
-        password = plugin.getConfig().getString("MongoDataBase.password");
-        maxConnectionPool = plugin.getConfig().getInt("MongoDataBase.maxConnectionPool", 10);
-        minConnectionPool = plugin.getConfig().getInt("MongoDataBase.minConnectionPool", 1);
+        instance = this;
+        config = plugin.getConfig().getConfigurationSection("MongoDataBase").getValues(false);
     }
 
     @Override
     public void setUp() {
         try {
-            // 连接池设置
-            ConnectionPoolSettings poolSettings = ConnectionPoolSettings.builder()
-                    .maxSize(Math.max(maxConnectionPool, 150))
-                    .minSize(Math.max(minConnectionPool, 10))
-                    .build();
-
-            // 构建连接字符串
-            String connectionString = enableVerify ?
-                    String.format("mongodb://%s:%s@%s:%d/%s", userName, password, ip, port, databaseName) :
-                    String.format("mongodb://%s:%d/%s", ip, port, databaseName);
-
-            // MongoDB 设置
-            MongoClientSettings settings = MongoClientSettings.builder()
-                    .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
-                    .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
-                    .applyToConnectionPoolSettings(builder -> builder.applySettings(poolSettings))
-                    .build();
-
-            // 创建 MongoClient
-            mongoClient = MongoClients.create(settings);
+            // 初始化 MongoDB 客户端
+            mongoClient = MongoClients.create(buildClientSettings());
 
             // 检测数据库连接
-            MongoDatabase db = mongoClient.getDatabase(databaseName);
+            MongoDatabase db = mongoClient.getDatabase((String) config.get("database"));
             db.runCommand(new Document("ping", 1));
-            db.createCollection("player");
-
             setDatabase(db);
-            plugin.getLogger().info("MongoDB 数据库连接成功: " + databaseName);
+
+            plugin.getLogger().info("MongoDB 数据库连接成功: " + db.getName());
         } catch (Exception e) {
             plugin.getLogger().severe("MongoDB 初始化失败: " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(plugin);
         }
+    }
+
+    private MongoClientSettings buildClientSettings() {
+        String connectionString = (boolean) config.get("enableVerify") ?
+                String.format("mongodb://%s:%s@%s:%d/%s",
+                        config.get("username"),
+                        config.get("password"),
+                        config.get("ip"),
+                        config.get("port"),
+                        config.get("database")) :
+                String.format("mongodb://%s:%d/%s",
+                        config.get("ip"),
+                        config.get("port"),
+                        config.get("database"));
+
+        ConnectionPoolSettings poolSettings = ConnectionPoolSettings.builder()
+                .maxSize((int) config.getOrDefault("maxConnectionPool", 150))
+                .minSize((int) config.getOrDefault("minConnectionPool", 10))
+                .build();
+
+        return MongoClientSettings.builder()
+                .uuidRepresentation(UuidRepresentation.JAVA_LEGACY)
+                .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
+                .applyToConnectionPoolSettings(builder -> builder.applySettings(poolSettings))
+                .build();
     }
 
     @Override
@@ -101,41 +97,61 @@ public class Mongo implements IDatabase {
 
     @Override
     public void createPlayerData(Player player) {
-        PlayerData data = getData(player);
+        PlayerData data = PlayerData.getPlayerData(player);
         Document doc = new Document("playerName", data.getPlayerName())
                 .append("lowName", data.getPlayerLowName())
-                .append("uuid", data.getUuid())
-                .append("killEffect", data.getKillEffect().getEffectInternalName())
-                .append("deathEffect", data.getDeathEffect().getEffectInternalName())
-                .append("shootEffect", data.getShootEffect().getEffectInternalName())
-                .append("unlockedEffects", data.getUnlockedEffects());
+                .append("uuid", data.getUuid().toString())
+                .append("killEffect", "NULL")
+                .append("deathEffect", "NULL")
+                .append("shootEffect", "NULL")
+                .append("unlockedEffects", new ArrayList<>());
 
         player.sendMessage(CC.translate(irina + "&7未检查到档案, 开始创建..."));
-        createPlayerProfile("player", doc, data.getUuid());
+        createOrUpdateDocument(doc, data.getUuid());
+
+        Document result = findDocumentByUuid(player.getUniqueId());
+
+        data.setUuid(UUID.fromString(result.getString("uuid")));
+        data.setPlayerName(result.getString("playerName"));
+        data.setPlayerLowName(result.getString("lowName"));
+        data.setDeathEffect(effectManager.getEffect(result.getString("deathEffect")));
+        data.setKillEffect(effectManager.getEffect(result.getString("killEffect")));
+        data.setShootEffect(effectManager.getEffect(result.getString("shootEffect")));
+        data.setUnlockedEffects(effectManager.getPlayerUnlockedEffects(player));
+
+        PlayerData.getData().put(data.getUuid(), data);
         player.sendMessage(CC.translate(irina + "&a创建成功!"));
     }
 
     @Override
     public void loadPlayerData(Player player) {
         UUID uuid = player.getUniqueId();
-        MongoCollection<Document> collection = database.getCollection("player");
-
-        Document query = new Document("uuid", uuid);
-        Document result = collection.find(query).first();
+        Document result = findDocumentByUuid(uuid);
 
         if (result != null) {
+            // 获取效果名称
+            String deathEffectName = result.getString("deathEffect");
+            String killEffectName = result.getString("killEffect");
+            String shootEffectName = result.getString("shootEffect");
+
+            // 设置玩家效果
+            if (!deathEffectName.equalsIgnoreCase("null")) effectManager.setPlayerEffect(player, deathEffectName, EffectType.DEATH);
+            if (!killEffectName.equalsIgnoreCase("null")) effectManager.setPlayerEffect(player, killEffectName, EffectType.KILL);
+            if (!shootEffectName.equalsIgnoreCase("null")) effectManager.setPlayerEffect(player, shootEffectName, EffectType.SHOOT);
+            if (result.getList("unlockedEffects", String.class) != null) effectManager.getPlayerUnlockedEffects(player).addAll(result.getList("unlockedEffects", String.class));
+
+            // 初始化玩家数据对象
             PlayerData data = new PlayerData(player);
-            EffectManager effectManager = EffectManager.getInstance();
-            data.setUuid(UUID.fromString(result.getString("uuid")));  // 确保读取UUID时的格式正确
+            data.setUuid(UUID.fromString(result.getString("uuid")));
             data.setPlayerName(result.getString("playerName"));
             data.setPlayerLowName(result.getString("lowName"));
-            data.setDeathEffect(effectManager.getEffect(result.getString("deathEffect")));
-            data.setKillEffect(effectManager.getEffect(result.getString("killEffect")));
-            data.setShootEffect(effectManager.getEffect(result.getString("shootEffect")));
-            data.setUnlockedEffects((List<AbstractEffect>) result.get("unlockedEffects"));
+            data.setDeathEffect(effectManager.getEffect(deathEffectName));
+            data.setKillEffect(effectManager.getEffect(killEffectName));
+            data.setShootEffect(effectManager.getEffect(shootEffectName));
+            data.setUnlockedEffects(effectManager.getPlayerUnlockedEffects(player));
 
+            // 存入内存
             PlayerData.getData().put(uuid, data);
-
             player.sendMessage(CC.translate(irina + "&a档案加载完毕!"));
         } else {
             player.sendMessage(CC.translate(irina + "&c档案加载出现异常, 请联系管理员!"));
@@ -146,71 +162,43 @@ public class Mongo implements IDatabase {
     public void savePlayerData(Player player) {
         UUID uuid = player.getUniqueId();
         PlayerData data = PlayerData.getData().get(uuid);
-
-        // 在保存时要检查 PlayerData 是否为空
         if (data == null) {
-            plugin.getLogger().warning("玩家数据不存在，无法保存数据: " + player.getName());
+            plugin.getLogger().warning("玩家数据不存在，无法保存: " + player.getName());
             return;
         }
 
-        Document doc = new Document("deathEffect", data.getDeathEffect())
-                .append("killEffect", data.getKillEffect().getEffectInternalName())
-                .append("shootEffect", data.getShootEffect().getEffectInternalName())
-                .append("unlockedEffects", data.getUnlockedEffects());
+        Document doc = new Document("deathEffect", data.getDeathEffect() != null ? data.getDeathEffect().getEffectInternalName() : "NULL")
+                .append("killEffect", data.getKillEffect() != null ? data.getKillEffect().getEffectInternalName() : "NULL")
+                .append("shootEffect", data.getShootEffect() != null ? data.getShootEffect().getEffectInternalName() : "NULL")
+                .append("unlockedEffects", data.getUnlockedEffects() != null ? data.getUnlockedEffects() : EffectManager.getInstance().getPlayerUnlockedEffects(player));
 
-        updateCollectionByUuid("player", doc, uuid);  // 确保保存时UUID正确
+        createOrUpdateDocument(doc, uuid);
     }
 
-    @Override
-    public void removePlayerData(Player player) {
-        UUID uuid = player.getUniqueId();
-        PlayerData.getData().remove(uuid);  // 在退出时清除玩家数据
-    }
-
-    @Override
-    public PlayerData getData(Player player) {
-        UUID uuid = player.getUniqueId();
-        return PlayerData.getData().computeIfAbsent(uuid, k -> new PlayerData(player));  // 如果没有数据则创建
-    }
-
-    public void updateCollectionByUuid(String collectionName, Document document, UUID uuid) {
-        MongoCollection<Document> collection = database.getCollection(collectionName);
+    public void createOrUpdateDocument(Document document, UUID uuid) {
+        MongoCollection<Document> collection = database.getCollection("player");
         Document query = new Document("uuid", uuid.toString());
-        Document updateValue = new Document("$set", document);
+        Document update = new Document("$set", document);
 
-        if (isExistValueInCollection(collectionName, "uuid", uuid)) {
-            collection.updateOne(query, updateValue);  // 如果存在就更新
+        if (isDocumentExist("player", uuid.toString())) {
+            collection.updateOne(query, update);
         } else {
-            plugin.getLogger().severe("玩家数据文档不存在但却执行了更新操作: " + uuid);
-        }
-    }
-
-    public void createPlayerProfile(String collectionName, Document document, UUID uuid) {
-        MongoCollection<Document> collection = database.getCollection(collectionName);
-        if (!isExistValueInCollection(collectionName, "playerName", uuid)) {
             collection.insertOne(document);
         }
     }
 
-    public boolean isExistValueInCollection(String collectionName, String checkType, UUID checkValue) {
+    public Document findDocumentByUuid(UUID uuid) {
+        MongoCollection<Document> collection = database.getCollection("player");
+        return collection.find(new Document("uuid", uuid.toString())).first();
+    }
 
-        if (database == null) {
-            plugin.getLogger().warning("数据库未初始化");
-            return false;  // 如果数据库对象为 null，返回 false
-        }
-
-        // 获取 MongoDB 集合
+    public boolean isDocumentExist(String collectionName, String value) {
         MongoCollection<Document> collection = database.getCollection(collectionName);
-
-        // 使用 countDocuments 来提高效率
-        Document query = new Document(checkType, checkValue.toString());
-        Document result = collection.find(query).first();
-
-        return result != null;
+        return collection.find(new Document("uuid", value)).first() != null;
     }
 
     @Override
-    public boolean isExistPlayerProfile(String collectionName, UUID uuid) {
-        return isExistValueInCollection(collectionName, "uuid", uuid);
+    public boolean isExistPlayerData(String collectionName, UUID uuid) {
+        return isDocumentExist(collectionName, uuid.toString());
     }
 }

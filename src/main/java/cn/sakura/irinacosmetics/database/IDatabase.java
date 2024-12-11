@@ -11,7 +11,5 @@ public interface IDatabase {
     void createPlayerData(Player player);
     void loadPlayerData(Player player);
     void savePlayerData(Player player);
-    void removePlayerData(Player player);
-    PlayerData getData(Player player);
-    boolean isExistPlayerProfile(String collectionName, UUID uuid);
+    boolean isExistPlayerData(String collectionName, UUID uuid);
 }

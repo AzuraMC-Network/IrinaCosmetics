@@ -1,8 +1,8 @@
 package cn.sakura.irinacosmetics.cosmetics.impl.kill;
 
-import cn.charlotte.pit.util.item.ItemBuilder;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectType;
+import cn.sakura.irinacosmetics.util.ItemUtil;
 import cn.sakura.irinacosmetics.util.PlayerUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -28,7 +28,7 @@ public class TestKillEffect extends AbstractEffect {
 
     @Override
     public ItemStack getIcon() {
-        return new ItemBuilder(Material.BOW).shiny().build();
+        return new ItemUtil(Material.BOW).shiny().build();
     }
 
     @Override

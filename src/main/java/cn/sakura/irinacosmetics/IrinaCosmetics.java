@@ -3,6 +3,7 @@ package cn.sakura.irinacosmetics;
 import cn.charlotte.pit.util.command.CommandHandler;
 import cn.sakura.irinacosmetics.database.IDatabase;
 import cn.sakura.irinacosmetics.database.Mongo;
+import cn.sakura.irinacosmetics.game.PlayerListener;
 import cn.sakura.irinacosmetics.util.ClassUtil;
 import cn.sakura.irinacosmetics.cosmetics.AbstractEffect;
 import cn.sakura.irinacosmetics.cosmetics.EffectManager;
@@ -24,10 +25,10 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
     public XConomyAPI xConomyAPI;
     public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
-    @Getter @Setter
-    private static IDatabase mongoDataBase;
-
     @Getter
+    public IDatabase mongoDataBase;
+
+    @Getter @Setter
     public static IrinaCosmetics instance;
     public static Plugin plugin;
 
@@ -78,10 +79,12 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
             }
 
             loadEffectManager();
-//            loadCommands();
+            loadCommands();
             loadListener();
+
             mongoDataBase = new Mongo();
             mongoDataBase.setUp();
+            Bukkit.getPluginManager().registerEvents(new PlayerListener(mongoDataBase), this);
         }, 21L);
     }
 
@@ -117,9 +120,9 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         }
     }
 
-//    private void loadCommands() {
-//        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.irinacosmetics.command");
-//    }
+    private void loadCommands() {
+        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.irinacosmetics.command");
+    }
 
     private void loadListener() {
         Collection<Class<?>> classes = ClassUtil.getClassesInPackage(this, "cn.sakura.irinacosmetics");
