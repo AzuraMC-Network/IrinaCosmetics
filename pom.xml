@@ -111,6 +111,13 @@
       <systemPath>${project.basedir}/lib/XConomy-Bukkit-2.26.3.jar</systemPath>
     </dependency>
     <dependency>
+      <groupId>org.black_ixx.playerpoints</groupId>
+      <artifactId>PlayerPoints</artifactId>
+      <version>3.2.7</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/PlayerPoints-3.2.7.jar</systemPath>
+    </dependency>
+    <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
       <version>3.12.14</version>

@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="caac0407-d67f-45aa-8194-d9ee57fafb78" name="更改" comment="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/MainCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="caac0407-d67f-45aa-8194-d9ee57fafb78" name="更改" comment="对 指令 框架进行了更新, 停止使用 ThePitPremium 的 Command Util">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/IrinaCosmetics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/IrinaCosmetics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/EnableEffect.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/OpenMenu.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/DeathEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/DeathEffect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/KillEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/KillEffect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/ShootEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/ShootEffect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/util/CC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/util/CC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <list id="c65d36e5-933b-4255-8395-21b827b73b6d" name="MindsMaster_ 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -169,7 +157,7 @@
       <workItem from="1733857343904" duration="140000" />
       <workItem from="1733857486947" duration="162000" />
       <workItem from="1733857668489" duration="1928000" />
-      <workItem from="1733914725136" duration="45852000" />
+      <workItem from="1733914725136" duration="46749000" />
     </task>
     <task id="LOCAL-00001" summary="继续完善 MongoDB 框架">
       <option name="closed" value="true" />
@@ -195,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733955147979</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="对 指令 框架进行了更新, 停止使用 ThePitPremium 的 Command Util">
+      <option name="closed" value="true" />
+      <created>1733963457984</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1733963457984</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,7 +212,8 @@
     <MESSAGE value="继续完善 MongoDB 框架" />
     <MESSAGE value="更新 未知空指针问题待解决" />
     <MESSAGE value="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull" />
-    <option name="LAST_COMMIT_MESSAGE" value="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull" />
+    <MESSAGE value="对 指令 框架进行了更新, 停止使用 ThePitPremium 的 Command Util" />
+    <option name="LAST_COMMIT_MESSAGE" value="对 指令 框架进行了更新, 停止使用 ThePitPremium 的 Command Util" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

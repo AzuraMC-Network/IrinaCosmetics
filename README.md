@@ -1,7 +1,7 @@
-# IrinaCosmetics
-## Project created on 2024-11-14
-
-<div style="text-align: center">
-    <span style="font-size: 150%; text-align: center">Inventory的插槽标记</span><br>
-    <img src="SomeFile/InventorySlot.png" alt="InventorySlot">
+<div align="center">
+<h1>Irina Cosmetics </h1>
+<h3>一个基本适用于 1.8.9 各种游戏的饰品插件</h3>
+<br>
+<h3>目前提供的饰品经济方案有: </h3>
+<h4>ThePitPremium | XConomy | PlayerPoints</h4>
 </div>

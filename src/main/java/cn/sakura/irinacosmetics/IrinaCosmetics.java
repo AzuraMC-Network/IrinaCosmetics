@@ -12,6 +12,7 @@ import cn.sakura.irinacosmetics.util.CC;
 import lombok.Getter;
 import lombok.Setter;
 import me.yic.xconomy.api.XConomyAPI;
+import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 public final class IrinaCosmetics extends JavaPlugin implements Listener {
     public XConomyAPI xConomyAPI;
+    public PlayerPoints playerPoints;
     public final String BalanceType = this.getConfig().getString("BalanceType");
     public static final String irina = "&8[&bI&fRINA&8] &f| ";
     @Getter
@@ -44,12 +46,22 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
             Plugin thePitPremiumPlugin = Bukkit.getPluginManager().getPlugin("ThePitPremium");
+            Plugin playerPointsPlugin = Bukkit.getPluginManager().getPlugin("PlayerPoints");
 
             Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a欢迎使用, 主人"));
 
             if (BalanceType != null) {
                 Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&a当前经济方案: &f" + BalanceType.toUpperCase()));
                 switch (BalanceType.toLowerCase()) {
+                    case "playerpoints":
+                        if (playerPointsPlugin != null) {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aPlayerPoints 已加载!"));
+                            playerPoints = new PlayerPoints();
+                        } else {
+                            Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&cPlayerPoints 未加载!"));
+                            Bukkit.getPluginManager().disablePlugin(this);
+                            return;
+                        }
                     case "xconomy":
                         if (xConomyPlugin != null) {
                             Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&aXConomy 已加载!"));

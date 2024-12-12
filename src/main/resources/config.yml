@@ -19,5 +19,5 @@ MongoDataBase:
   #最小连接数
   minConnectionPool: 10
 
-#此段填入你的余额类型 (必填项) [ThePitPremium、XConomy]
+#此段填入你的余额类型 (必填项) [ThePitPremium、XConomy, PlayerPoints]
 BalanceType: ThePitPremium
