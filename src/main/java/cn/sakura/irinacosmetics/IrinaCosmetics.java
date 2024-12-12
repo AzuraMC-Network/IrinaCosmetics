@@ -1,6 +1,6 @@
 package cn.sakura.irinacosmetics;
 
-import cn.charlotte.pit.util.command.CommandHandler;
+import cn.sakura.irinacosmetics.command.MainCommand;
 import cn.sakura.irinacosmetics.database.IDatabase;
 import cn.sakura.irinacosmetics.database.Mongo;
 import cn.sakura.irinacosmetics.game.PlayerListener;
@@ -38,6 +38,8 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
         plugin = this;
 
         plugin.saveDefaultConfig();
+
+        getCommand("irina").setExecutor(new MainCommand());
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Plugin xConomyPlugin = Bukkit.getPluginManager().getPlugin("XConomy");
@@ -79,9 +81,7 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
             }
 
             loadEffectManager();
-            loadCommands();
             loadListener();
-
             mongoDataBase = new Mongo();
             mongoDataBase.setUp();
             Bukkit.getPluginManager().registerEvents(new PlayerListener(mongoDataBase), this);
@@ -118,10 +118,6 @@ public final class IrinaCosmetics extends JavaPlugin implements Listener {
             Bukkit.getConsoleSender().sendMessage(CC.translate(irina + "&c加载时发生错误!"));
             e.printStackTrace();
         }
-    }
-
-    private void loadCommands() {
-        CommandHandler.loadCommandsFromPackage(this, "cn.sakura.irinacosmetics.command");
     }
 
     private void loadListener() {

@@ -4,19 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="caac0407-d67f-45aa-8194-d9ee57fafb78" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="caac0407-d67f-45aa-8194-d9ee57fafb78" name="更改" comment="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/MainCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dependency-reduced-pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/IrinaCosmetics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/IrinaCosmetics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/cosmetics/EffectManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/cosmetics/EffectManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/database/Mongo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/database/Mongo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/EnableEffect.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/command/OpenMenu.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/DeathEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/DeathEffect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/KillEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/KillEffect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/ShootEffect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/menu/player/impl/ShootEffect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/util/CC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/sakura/irinacosmetics/util/CC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
+    <list id="c65d36e5-933b-4255-8395-21b827b73b6d" name="MindsMaster_ 进行的更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -46,6 +61,8 @@
     "Maven.IrinaCosmetics [clean,install].executor": "Run",
     "Maven.IrinaCosmetics [package,clean].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "extract.method.default.visibility": "private",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/BLUEMOON/Desktop/IDEAProjects/IrinaCosmetics",
@@ -57,7 +74,7 @@
     "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.32413793",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
+    "settings.editor.selected.configurable": "CodeWithMe",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -151,8 +168,34 @@
       <workItem from="1733851288420" duration="5473000" />
       <workItem from="1733857343904" duration="140000" />
       <workItem from="1733857486947" duration="162000" />
-      <workItem from="1733857668489" duration="1654000" />
+      <workItem from="1733857668489" duration="1928000" />
+      <workItem from="1733914725136" duration="45852000" />
     </task>
+    <task id="LOCAL-00001" summary="继续完善 MongoDB 框架">
+      <option name="closed" value="true" />
+      <created>1733859432077</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1733859432077</updated>
+    </task>
+    <task id="LOCAL-00002" summary="更新 未知空指针问题待解决">
+      <option name="closed" value="true" />
+      <created>1733928375421</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1733928375421</updated>
+    </task>
+    <task id="LOCAL-00003" summary="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull">
+      <option name="closed" value="true" />
+      <created>1733955147979</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1733955147979</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -168,5 +211,15 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="继续完善 MongoDB 框架" />
+    <MESSAGE value="更新 未知空指针问题待解决" />
+    <MESSAGE value="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull" />
+    <option name="LAST_COMMIT_MESSAGE" value="击毙 MongoDB &amp; NullPointerException nullnullnullnullnullnullnullnull" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

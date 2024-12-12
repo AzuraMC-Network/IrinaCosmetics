@@ -12,12 +12,12 @@ public class CC {
     }
 
     public static List<String> translate(List<String> list) {
-        List<String> toReturn = new ArrayList<>();
-        for (String line : list) {
-            toReturn.add(ChatColor.translateAlternateColorCodes('&', line));
+        List<String> translated = new ArrayList<>();
+        for (String string : list) {
+            translated.add(translate(string));
         }
 
-        return toReturn;
+        return translated;
     }
 
     public static void broadcast(String HasTranslateString) {

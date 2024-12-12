@@ -2,3 +2,8 @@ name: IrinaCosmetics
 version: '${project.version}'
 Author: Irina
 main: cn.sakura.irinacosmetics.IrinaCosmetics
+
+commands:
+  irina:
+    description: 主指令 Irina
+    usage: /irina <子指令>
