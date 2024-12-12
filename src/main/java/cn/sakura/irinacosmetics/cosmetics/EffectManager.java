@@ -23,6 +23,7 @@ public class EffectManager {
     public static final List<AbstractEffect> ShootEffects = new ArrayList<>();
     private final List<AbstractEffect> effects = new ArrayList<>();
     private final HashMap<String, AbstractEffect> effectMap = new HashMap<>();
+    private final HashMap<String, String> cnEffectMap = new HashMap<>();
 
     private EffectManager() {}
     /**
@@ -74,6 +75,7 @@ public class EffectManager {
         }
 
         effectMap.put(effect.getEffectInternalName(), effect);
+        cnEffectMap.put(effect.getDisplayName(), effect.getEffectInternalName());
         Bukkit.getLogger().info(CC.translate(irina + "&a特效 "
                 + effect.getEffectInternalName() + " | " + effect.getDisplayName() + " 注册成功!"));
     }
